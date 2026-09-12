@@ -128,6 +128,11 @@ class	Client
 					_rtt = utils::Chrono::getTimestampMS() - _rtt_send;
 					break ;
 				}
+				case RTTREQUEST_TYPE:
+				{
+					mbl::net::Packet::RTTReply	req;
+					send(&req, sizeof(req));
+				}
 				default:
 					return (0);
 			}

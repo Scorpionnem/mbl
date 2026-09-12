@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <string>
 #include "math/math.hpp"
+#include "net/Packet.hpp"
 
 namespace mbl { namespace net {
 
@@ -122,6 +123,12 @@ class	Server
 					return (0);
 				}
 
+				if (_private_packet(fd, data, recv_size))
+				{
+					event = Event::NONE;
+					return (0);
+				}
+
 				fd = pfd.fd;
 				received_size = recv_size;
 				event = Event::RECV;
@@ -157,6 +164,33 @@ class	Server
 		const std::string&	addr() const {return (_addr);}
 		int	port() const {return (_port);}
 	private:
+		int	_private_packet(int fd, void* data, u64 size)
+		{
+			if (size < sizeof(net::Packet::Header))
+				return (0);
+
+			net::Packet::Header*	hdr = reinterpret_cast<net::Packet::Header*>(data);
+
+			if (hdr->magic != MBL_PCKT_MAGIC)
+				return (0);
+
+			switch (hdr->type)
+			{
+				case RTTREPLY_TYPE: // rtt reply
+				{
+					break ;
+				}
+				case RTTREQUEST_TYPE:
+				{
+					mbl::net::Packet::RTTReply	req;
+					send(fd, &req, sizeof(req));
+					break ;
+				}
+				default:
+					return (0);
+			}
+			return (1);
+		}
 		void	disconnect(int fd)
 		{
 			::close(fd);
