@@ -1,7 +1,3 @@
-lib/math
-lib/stb_image
-.obj/
 libmbl.a
-compile_commands.json
-assets/textures/test
-a.out
+.obj/
+lib/stb_image
