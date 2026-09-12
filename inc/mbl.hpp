@@ -4,6 +4,7 @@
 #pragma once
 
 #include "render/render.hpp"
+#include "loader/mesh/obj.hpp"
 #include "platform/platform.hpp"
 #include "platform/platform.hpp"
 #include "math/math.hpp"
