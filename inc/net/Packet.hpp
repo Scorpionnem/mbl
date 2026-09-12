@@ -5,6 +5,7 @@
 
 namespace mbl { namespace net {
 
+/// Packed wire-format structs shared between Client and Server, tagged by a leading Header.
 namespace	Packet
 {
 	struct	Header
@@ -22,6 +23,7 @@ namespace	Packet
 		float			z;
 	} __attribute__((packed));
 
+	/// Current time in milliseconds since the epoch, for RTT measurement.
 	inline u64	getmsts()
 	{
 		struct timeval tp;

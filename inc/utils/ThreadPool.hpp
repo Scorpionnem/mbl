@@ -12,17 +12,18 @@
 
 namespace mbl { namespace utils {
 
+/// Fixed pool of worker threads pulling tasks off a shared queue.
 class	ThreadPool
 {
 	public:
 		ThreadPool() : _active_tasks(0), _stop(false) {}
-		/* Construct threadpool and add n threads */
+		/// Constructs the pool and starts n worker threads.
 		ThreadPool(uint64_t n) {add(n);}
 		~ThreadPool() {if (!_stop) stop();}
 
 		uint64_t	threads() {return (_threads_count);}
 
-		/* Adds N threads to the pool */
+		/// Starts n more worker threads.
 		void	add(uint64_t n)
 		{
 			_threads_count += n;
@@ -30,7 +31,7 @@ class	ThreadPool
 				_worker_threads.emplace_back(std::bind(&ThreadPool::_worker, this));
 		}
 
-		/* Stop all threads join them */
+		/// Signals all worker threads to stop and joins them.
 		void	stop()
 		{
 			std::unique_lock<std::mutex> latch(_queue_mutex);
@@ -44,7 +45,7 @@ class	ThreadPool
 				thread.join();
 		}
 
-		/* Waits for all tasks to be treated */
+		/// Blocks until the queue is empty and no task is currently running.
 		void	wait_finish()
 		{
 			while (1)
@@ -59,14 +60,14 @@ class	ThreadPool
 		}
 		uint64_t	active_tasks() {return (_active_tasks);}
 
-		/* Queue a task for the threads to generate */
+		/// Queues one task to be run by a worker thread.
 		void	queue_task(std::function<void(void)> task)
 		{
 			std::unique_lock<std::mutex> lock(_queue_mutex);
 			_tasks.emplace_back(task);
 			_cv_task.notify_one();
 		}
-		/* Queue a vector of task for the threads to generate */
+		/// Queues several tasks at once.
 		void	queue_task(const std::vector<std::function<void(void)>> &tasks)
 		{
 			std::unique_lock<std::mutex> lock(_queue_mutex);

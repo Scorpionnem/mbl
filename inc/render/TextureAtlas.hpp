@@ -14,6 +14,8 @@
 
 namespace mbl { namespace render {
 
+/// Packs multiple images into one growable square texture, keyed by name (usually a file path).
+/// Grows by doubling size and repacking when a new texture no longer fits.
 class   TextureAtlas
 {
     public:
@@ -23,6 +25,7 @@ class   TextureAtlas
         TextureAtlas(const TextureAtlas&) = delete;
         TextureAtlas& operator=(const TextureAtlas&) = delete;
 
+        /// Loads an image from disk and packs it in, keyed by its path.
         void        add_texture(const std::string& path)
         {
             int             width;
@@ -34,6 +37,7 @@ class   TextureAtlas
             loader::texture::stb::load(path, data, width, height, channels, format);
             add_texture(path, data, width, height, channels, format);
         }
+        /// Packs raw pixel data in, keyed by @p path (used as a lookup key, need not be a real file).
         void	add_texture(const std::string& path, const std::vector<u8>& pixels, int width, int height, int channels, GLenum format)
         {
 	        std::vector<u8> rgba = _toRGBA(pixels, width, height, channels);
@@ -60,6 +64,7 @@ class   TextureAtlas
 	        throw std::runtime_error("TextureAtlas: could not find a spot for " + path);
         }
 
+        /// Uploads the packed atlas image to the GPU.
         void        upload()
         {
             _texture.clear_pixel_data();
@@ -72,6 +77,7 @@ class   TextureAtlas
 
         bool        has(const std::string& path) const {return (_uvs.find(path) != _uvs.end());}
 
+        /// Normalized UV rect (min_x, min_y, max_x, max_y) of the texture packed under @p path.
         vec4f       uv(const std::string& path) const
         {
             auto    it = _uvs.find(path);

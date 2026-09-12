@@ -14,6 +14,7 @@
 
 namespace mbl { namespace net {
 
+/// Non-blocking TCP client (recv() never blocks; call it in a loop and check `event`).
 class	Client
 {
 	public:
@@ -29,6 +30,7 @@ class	Client
 		{
 			disconnect();
 		}
+		/// Connects to address:port. Returns 0 on success, -1 on error (errno set).
 		int connect(const char* address, int port)
 		{
 			struct sockaddr_in	serv_addr;
@@ -54,6 +56,7 @@ class	Client
 				_fd = -1;
 			}
 		}
+		/// Non-blocking receive. Sets event to RECV/DISCONNECT/NONE; returns -1 on error.
 		int	recv(void* data, u64 size, Event& event, u64& received_size)
 		{
 			if (_fd == -1)
@@ -83,6 +86,7 @@ class	Client
 			event = Event::RECV;
 			return (0);
 		}
+		/// Blocking send (waits until all `size` bytes are sent).
 		int	send(const void* data, u64 size)
 		{
 			return (::send(_fd, data, size, MSG_WAITALL));

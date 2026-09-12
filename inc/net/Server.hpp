@@ -16,6 +16,9 @@
 
 namespace mbl { namespace net {
 
+/// Non-blocking, poll()-based TCP server accepting multiple clients.
+/// Call update() then recv() in a loop each frame/tick; recv() walks pending
+/// poll events one at a time until it returns NONE.
 class	Server
 {
 	public:
@@ -26,6 +29,7 @@ class	Server
 			CONNECTION,
 			NONE,
 		};
+		/// Binds and listens on `port`. Returns 0 on success, -1 on error (errno set).
 		int	open(int port, int max_connections = 16)
 		{
 			struct sockaddr_in	addr;
@@ -56,6 +60,7 @@ class	Server
 
 			return (0);
 		}
+		/// Polls all sockets; must be called before draining events with recv().
 		int	update()
 		{
 			_pollfds.clear();
@@ -79,6 +84,7 @@ class	Server
 			_poll_index = 0;
 			return (0);
 		}
+		/// Pops the next pending event (RECV/DISCONNECT/CONNECTION/NONE) from the last update().
 		int	recv(void* data, u64 size, Event& event, u64& received_size, int& fd)
 		{
 			while (_poll_index < _pollfds.size())
@@ -125,10 +131,12 @@ class	Server
 			event = Event::NONE;
 			return (0);
 		}
+		/// Non-blocking send to one client.
 		int	send(int fd, const void* data, u64 size)
 		{
 			return (::send(fd, data, size, MSG_DONTWAIT));
 		}
+		/// Non-blocking send to every connected client.
 		int	send_all(const void* data, u64 size)
 		{
 			for (int fd : _clients)

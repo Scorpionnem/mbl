@@ -1,3 +1,5 @@
+/// @namespace mbl::render
+/// OpenGL rendering: shaders, textures/atlases, meshes, framebuffers, camera, bitmap fonts.
 #pragma once
 
 #include "render/Camera.hpp"

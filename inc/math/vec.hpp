@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 
+/// Fixed-size numeric vector (position, direction, color, size, ...). N = component count, T = component type.
 template <std::size_t N, typename T = float>
 struct vec
 {
@@ -15,6 +16,7 @@ struct vec
     vec(T x, T y) requires (N >= 2) : vec() {data[0] = x; data[1] = y;}
     vec(T x, T y, T z) requires (N >= 3) : vec() {data[0] = x; data[1] = y; data[2] = z;}
     vec(T x, T y, T z, T w) requires (N >= 4) : vec() {data[0] = x; data[1] = y; data[2] = z; data[3] = w;}
+    /// Converts to/from another size/type; extra components are dropped, missing ones stay 0.
     template <std::size_t NN, typename TT>
     vec(const vec<NN, TT>& cpy)
     {
@@ -39,6 +41,7 @@ struct vec
     vec<N, T>   operator/(const vec<N, T>& b) const;
     vec<N, T>&  operator/=(const vec<N, T>& b);
 
+	/// Euclidean (L2) length.
 	static constexpr T	length(const vec<N, T>& v)
 	{
 		T	acc = 0;
@@ -50,6 +53,7 @@ struct vec
 	}
 	constexpr T	length() const {return (vec<N, T>::length(*this));}
 
+	/// Scaled to unit length; returns a zero vector for a zero-length input.
 	static constexpr vec<N, T>	normalize(const vec<N, T>& v)
 	{
 		T	len = v.length();
@@ -58,6 +62,7 @@ struct vec
 	}
 	constexpr vec<N, T>	normalize() const {return (vec<N, T>::normalize(*this));}
 
+	/// Cross product, N == 3 only.
 	static constexpr vec<N, T>	cross(const vec<N, T>& v1, const vec<N, T>& v2) requires (N == 3)
 	{
 		return (vec<N, T>(
@@ -79,6 +84,7 @@ struct vec
 	}
 	constexpr T	dot(const vec<N, T>& v) const {return (vec<N, T>::dot(*this, v));}
 
+	/// Reflects v across the plane whose normal is n (n should be unit length).
 	static constexpr vec<N, T>	reflect(const vec<N, T>& v, const vec<N, T>& n)
 	{
 		return (v - vec<N, T>(2.0) * vec<N, T>(dot(n, v)) * n);

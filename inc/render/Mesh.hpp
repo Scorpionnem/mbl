@@ -8,9 +8,12 @@
 
 namespace mbl { namespace render {
 
+/// Raw vertex data (VAO/VBO) with a user-defined vertex layout. Fill with add_vertex_data()/
+/// add_vertex_layout(), call upload() once, then draw() each frame.
 class   Mesh
 {
     public:
+        /// One glVertexAttribPointer binding, describing one field of the vertex struct.
         struct	VertexLayout
 		{
 			// Location (layout (location = X))
@@ -37,20 +40,24 @@ class   Mesh
         Mesh(const Mesh&) = delete;
         Mesh& operator=(const Mesh&) = delete;
 
+		/// Appends raw vertex bytes; set_sizeof_layout() must be called first (used to count vertices).
 		void	add_vertex_data(u8 *bytes, u64 size)
 		{
             _vertices += size / _sizeof_layout;
 			_mesh_bytes.insert(_mesh_bytes.end(), bytes, bytes + size);
 		}
+		/// Declares one vertex attribute (mirrors a `layout(location = ...)` in the vertex shader).
 		void	add_vertex_layout(u32 location, u32 count, GLenum type, u32 offset)
 		{
 			_vertex_layouts.push_back(VertexLayout{.location = location, .count = count, .type = type, .offset = offset});
 		}
+		/// Sets the byte size of one vertex (stride).
 		void	set_sizeof_layout(u64 size)
 		{
 			_sizeof_layout = size;
 		}
 
+		/// Uploads the accumulated vertex data and layout to the GPU.
 		void	upload()
 		{
 			if (_VAO != 0)
@@ -74,6 +81,7 @@ class   Mesh
 
 			glBindVertexArray(0);
 		}
+		/// Draws the mesh with the given primitive mode; returns the vertex count.
 		u64	draw(GLenum mode)
 		{
 			glBindVertexArray(_VAO);

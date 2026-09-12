@@ -5,6 +5,8 @@
 #include "render/Camera.hpp"
 
 namespace mbl { namespace utils {
+
+/// N-dimensional axis-aligned bounding box.
 template <std::size_t N, typename T>
 struct  AABB
 {
@@ -27,6 +29,7 @@ struct  AABB
         return (true);
     }
 
+    /// Builds a wireframe (GL_LINES) unit-cube mesh for drawing a 3D box; N == 3 only.
     static void	gen_aabb3_mesh(render::Mesh& mesh) requires (N == 3)
 	{
 		mesh.set_sizeof_layout(2 * sizeof(vec3f));
@@ -51,6 +54,7 @@ struct  AABB
 		mesh.add_vertex_data(reinterpret_cast<u8*>(vertices), sizeof(vertices));
 	}
 
+	/// Draws `aabb` as a wireframe box using a mesh from gen_aabb3_mesh().
 	template <typename TT>
 	static void draw_aabb3(AABB<3, TT> aabb, render::Camera& cam, render::Shader& shader, render::Mesh& mesh)
 	{

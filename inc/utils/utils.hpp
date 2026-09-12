@@ -1,3 +1,5 @@
+/// @namespace mbl::utils
+/// Assorted helpers: AABBs, a stopwatch, facing/direction enums, a thread pool.
 #pragma once
 
 #include "utils/AABB.hpp"

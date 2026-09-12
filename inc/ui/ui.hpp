@@ -14,9 +14,14 @@
 
 namespace mbl {
 
+/// Static immediate-mode UI system: call beginFrame() once per frame, then the widget
+/// functions (text/button/toggle/input/slider/progress_bar) to queue draws, then render().
+/// Positions/sizes are given in a virtual target resolution (setTargetSize()) and scaled
+/// to fit the actual window.
 class ui
 {
     public:
+        /// Which corner/point of the target rect `pos` refers to.
         enum class Anchor
         {
             CENTER,
@@ -26,25 +31,34 @@ class ui
             BOTTOM_RIGHT,
         };
 
+        /// Loads the bitmap font used to render all text.
         static void    init(const std::string& font_path);
         static void	destroy();
+        /// Starts a new frame; must be called before any widget function.
         static void    beginFrame(const platform::Input& input);
+        /// Draws everything queued by widget calls since beginFrame().
         static void    render();
 
+        /// Sets the virtual resolution that widget positions/sizes are expressed in.
         static void    setTargetSize(u32 width, u32 height);
         static void    setTargetFontScale(u32 scale);
 
+        /// Current pixel scale factor from virtual to real window size.
         static float	getScale();
         static u32	getFontSizeY();
         static u32	getFontSizeX(char c);
         static u32	getFontSizeX(const std::string &s);
 
         static void	text(const std::string& label, vec2i pos, Anchor anchor = Anchor::CENTER, vec3f color = vec3f(1), bool background = false, vec3f background_color = vec3f(1));
-        // takes advance [0, 1]
+        /// advance in [0, 1].
         static void	progress_bar(float advance, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
+        /// Returns true on the frame the button is clicked.
         static bool    button(const std::string& label, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
+        /// Toggles state on click; returns the resulting state.
         static bool	toggle(const std::string& label, bool& state, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
+        /// Editable text field; returns true while it has focus.
         static bool    input(const std::string& label, std::string& input, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
+        /// Draggable slider over [min, max]; returns true while being dragged.
         static bool	slider(const std::string& label, int& input, int min, int max, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
     private:
         static vec2i	anchorOrigin(vec2i ssize, ui::Anchor anchor);

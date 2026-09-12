@@ -11,6 +11,7 @@
 
 namespace mbl { namespace platform {
 
+/// SDL2 window with an OpenGL context.
 class Window
 {
 	public:
@@ -21,9 +22,11 @@ class Window
 		Window& operator=(const Window&) = delete;
 
 		void    open(const char* title, u32 width, u32 height);
+		/// Opens a square window of the given size.
 		void    open(const char* title, u32 size);
 		void    close();
 
+		/// Pumps SDL events and returns the updated Input state for this frame.
 		const platform::Input&    pollEvents();
 
 		void    swapBuffers();

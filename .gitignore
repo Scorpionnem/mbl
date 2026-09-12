@@ -1,3 +1,5 @@
 libmbl.a
 .obj/
 lib/stb_image
+doxygen-build/
+doxygen-awesome-css/

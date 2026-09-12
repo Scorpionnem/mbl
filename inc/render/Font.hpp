@@ -10,6 +10,8 @@
 
 namespace mbl { namespace render {
 
+/// Bitmap font: slices a fixed grid of monospaced glyph cells out of one square texture,
+/// trims each glyph to its actual (non-transparent) width, and packs them into a TextureAtlas.
 class	Font
 {
 	public:
@@ -19,6 +21,7 @@ class	Font
 		Font(const Font&) = delete;
 		Font& operator=(const Font&) = delete;
 
+		/// Loads the font texture; font_atlas_format is the grid size (e.g. 16 for a 16x16 glyph grid).
 		void	load(const std::string& path, u32 font_atlas_format)
 		{
 			int             font_width;
@@ -72,6 +75,7 @@ class	Font
 		const TextureAtlas&	get_atlas() const {return (atlas);}
 		int	get_char_size() const {return (char_size);}
 		int	get_width(char c) const {return (widths[(u8)c]);}
+		/// Total rendered width of the string at the font's native scale.
 		int	get_width(const std::string& s) const
 		{
 			int	res = 0;

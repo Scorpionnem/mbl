@@ -4,6 +4,7 @@
 
 namespace mbl { namespace render {
 
+/// First-person style camera (position + yaw/pitch) with view/projection matrix helpers.
 struct   Camera
 {
     mat4f	getViewMatrix()

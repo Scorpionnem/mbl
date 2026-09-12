@@ -3,24 +3,28 @@
 #include <cstdint>
 #include <math/vec.hpp>
 
+/// -1, 0 or 1 depending on the sign of n.
 template <typename T>
 int	sign(T n)
 {
 	return (n == 0 ? 0 : n > 0 ? 1 : -1);
 }
 
+/// Fractional part of v.
 template <typename T>
 T	frac(T v)
 {
 	return (v - floor(v));
 }
 
+/// Degrees to radians.
 template <typename T>
 inline T radians(T deg)
 {
 	return (deg * M_PI / 180.0);
 }
 
+/// Linear interpolation between a and b by t.
 template <typename T, typename I>
 T	lerp(T a, T b, I t)
 {

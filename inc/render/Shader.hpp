@@ -5,6 +5,7 @@
 
 namespace mbl { namespace render {
 
+/// OpenGL shader program built from a vertex + fragment GLSL source pair.
 class   Shader
 {
     public:
@@ -14,6 +15,7 @@ class   Shader
         Shader(const Shader&) = delete;
         Shader& operator=(const Shader&) = delete;
 
+        /// Compiles and links the program from the given GLSL source files.
         void    load(const char *vert_path, const char *frag_path);
         void    unload()
         {
@@ -23,6 +25,7 @@ class   Shader
                 _program = 0;
             }
         }
+        /// Recompiles from the paths passed to the last load().
         void    reload()
         {
             load(_vert_path.c_str(), _frag_path.c_str());

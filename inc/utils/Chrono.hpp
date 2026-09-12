@@ -6,6 +6,7 @@
 
 namespace mbl { namespace utils {
 
+/// Monotonic stopwatch, in seconds.
 class	Chrono
 {
 	public:
@@ -15,15 +16,18 @@ class	Chrono
 		}
 		~Chrono() {}
 
+		/// Resets the stopwatch to zero.
 		void	start()
 		{
 			_start = getTime();
 		}
+		/// Seconds elapsed since start().
 		double	get()
 		{
 			return (getTime() - _start);
 		}
 
+		/// Current monotonic clock time, in seconds.
 		static double getTime()
 		{
 			double	res;

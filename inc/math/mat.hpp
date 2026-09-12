@@ -22,6 +22,8 @@
 	vertical = column
 */
 
+/// Column-major N x N matrix (see mat3f/mat4f). translate/scale/rotate*/perspective/ortho/lookAt
+/// are each only available for the N they make sense for, via `requires` clauses.
 template <std::size_t N, typename T>
 struct	mat
 {
@@ -91,6 +93,7 @@ struct	mat
 		return (res);
 	}
 
+	/// Rotation around the X axis, angle in radians.
 	static mat<N, T>	rotateX(T angle) requires (N == 4)
 	{
 		mat<N, T>	res = mat<N, T>::identity();
@@ -104,6 +107,7 @@ struct	mat
 		return (res);
 	}
 
+	/// Rotation around the Y axis, angle in radians.
 	static mat<N, T>    rotateY(T angle) requires (N == 4)
 	{
 		mat<N, T>   res = mat<N, T>::identity();
@@ -117,6 +121,7 @@ struct	mat
 		return (res);
 	}
 
+	/// Rotation around the Z axis, angle in radians.
 	static mat<N, T>    rotateZ(T angle) requires (N == 4)
 	{
 		mat<N, T>   res = mat<N, T>::identity();
@@ -130,6 +135,7 @@ struct	mat
 		return (res);
 	}
 
+	/// 2D rotation, angle in radians.
 	static mat<N, T>    rotate(T angle) requires (N == 3)
 	{
 		mat<N, T>   res = mat<N, T>::identity();
@@ -143,6 +149,7 @@ struct	mat
 		return (res);
 	}
 
+	/// OpenGL-style perspective projection (fov in degrees).
 	static mat<N, T>    perspective(T fov_deg, T aspect, T near, T far) requires (N == 4)
 	{
 		T	tf2 = std::tan(radians(fov_deg) / 2);
@@ -156,6 +163,7 @@ struct	mat
 		res(2, 3) = -1;
 		return (res);
 	}
+	/// OpenGL-style orthographic projection.
 	static mat<N, T>    ortho(T left, T right, T bottom, T top, T near, T far) requires (N == 4)
 	{
 	    mat<N, T>   res = mat<N, T>::identity();
@@ -172,6 +180,7 @@ struct	mat
 	}
 
 
+	/// View matrix looking from eye towards center, with the given up vector.
 	static mat<N, T>    lookAt(const vec<3, T> &eye, const vec<3, T> &center, const vec<3, T> &up) requires (N == 4)
 	{
 		vec<3, T>   f = (center - eye).normalize();

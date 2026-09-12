@@ -1,0 +1,31 @@
+# Minimal Doxyfile for mbl. Unlisted settings keep Doxygen's built-in defaults.
+# Generate docs locally with: doxygen Doxyfile
+# Output goes to doxygen-build/html/index.html
+
+PROJECT_NAME           = "mbl"
+PROJECT_BRIEF          = "Personal C++ game/engine toolkit (rendering, windowing, UI, networking, math)"
+
+OUTPUT_DIRECTORY       = doxygen-build
+
+INPUT                  = README.md inc
+USE_MDFILE_AS_MAINPAGE = README.md
+RECURSIVE              = YES
+FILE_PATTERNS          = *.hpp
+
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+
+GENERATE_LATEX         = NO
+GENERATE_HTML          = YES
+
+HAVE_DOT               = NO
+CLASS_DIAGRAMS         = YES
+
+# Modern theme (https://github.com/jothepro/doxygen-awesome-css).
+# Fetched by the docs CI workflow before running doxygen; ignored locally if absent.
+HTML_EXTRA_STYLESHEET  = doxygen-awesome-css/doxygen-awesome.css \
+                          doxygen-awesome-css/doxygen-awesome-sidebar-only.css
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_COLORSTYLE        = LIGHT

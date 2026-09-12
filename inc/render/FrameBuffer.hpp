@@ -6,6 +6,7 @@
 
 namespace mbl { namespace render {
 
+/// Offscreen render target: an FBO with a color texture and a depth texture attachment.
 class   FrameBuffer
 {
     public:
@@ -23,18 +24,23 @@ class   FrameBuffer
         FrameBuffer(const FrameBuffer&) = delete;
         FrameBuffer& operator=(const FrameBuffer&) = delete;
 
+        /// Allocates the FBO and its color/depth textures at the given size.
         void    create(u32 width, u32 height);
+        /// Recreates the FBO and its textures at a new size.
         void    resize(u32 width, u32 height);
 
+        /// Binds this FBO and sets the viewport to its size.
         void    bind() const
         {
             glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
             glViewport(0, 0, _width, _height);
         }
+        /// Rebinds the default framebuffer (the screen).
         void    unbind() const
         {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
+        /// Clears the currently bound framebuffer's color and depth buffers.
         static void	clear()
         {
         	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

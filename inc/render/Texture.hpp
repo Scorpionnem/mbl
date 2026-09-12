@@ -7,6 +7,9 @@
 
 namespace mbl { namespace render {
 
+/// OpenGL 2D texture. Pixel data is staged on the CPU with add_pixel_data()/set_format(),
+/// then uploaded to the GPU with upload(); with no pixel data, upload() generates a
+/// magenta/black checkerboard "missing texture" placeholder instead.
 class	Texture
 {
 	public:
@@ -66,10 +69,12 @@ class	Texture
 
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
+		/// Binds this texture to the given texture unit.
 		void	bind(u32 unit) const
 		{
 			Texture::bind(_id, unit);
 		}
+		/// Binds a raw GL texture id to the given texture unit.
 		static void	bind(GLuint id, u32 unit)
 		{
 			glActiveTexture(GL_TEXTURE0 + unit);

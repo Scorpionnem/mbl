@@ -4,6 +4,7 @@
 
 namespace mbl { namespace utils {
 
+/// One of the 6 axis-aligned directions.
 enum class Facing
 {
 	POS_X,
@@ -15,6 +16,7 @@ enum class Facing
 	INVALID,
 };
 
+/// Facing, named as compass/vertical directions (NORTH = -Z, UP = +Y, ...).
 enum class FacingCardinal
 {
 	NORTH = static_cast<int>(Facing::NEG_Z),
@@ -26,6 +28,7 @@ enum class FacingCardinal
 	INVALID = static_cast<int>(Facing::INVALID),
 };
 
+/// Facing of the dominant axis of `dir`.
 inline Facing	facing(vec3f dir)
 {
 	float	abs_x = std::abs(dir.x());
