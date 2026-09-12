@@ -153,6 +153,18 @@ class	Server
 			}
 			return (0);
 		}
+		int	send_all_except(int fd, const void* data, u64 size)
+		{
+			for (int f : _clients)
+			{
+				if (f == fd)
+					continue ;
+
+				if (send(f, data, size) == -1)
+					return (-1);
+			}
+			return (0);
+		}
 		void	close()
 		{
 			for (int fd : _clients)
