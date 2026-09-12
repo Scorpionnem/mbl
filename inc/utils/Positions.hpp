@@ -44,48 +44,45 @@ inline Facing	facing(vec3f dir)
 	return (Facing::INVALID);
 }
 
-namespace std
+inline std::string	to_string(FacingCardinal f)
 {
-	inline std::string	to_string(FacingCardinal f)
+	switch (f)
 	{
-		switch (f)
-		{
-			case FacingCardinal::UP:
-				return ("up");
-			case FacingCardinal::DOWN:
-				return ("down");
-			case FacingCardinal::EAST:
-				return ("east");
-			case FacingCardinal::WEST:
-				return ("west");
-			case FacingCardinal::SOUTH:
-				return ("south");
-			case FacingCardinal::NORTH:
-				return ("north");
-			default:
-				return ("invalid");
-		}
+		case FacingCardinal::UP:
+			return ("up");
+		case FacingCardinal::DOWN:
+			return ("down");
+		case FacingCardinal::EAST:
+			return ("east");
+		case FacingCardinal::WEST:
+			return ("west");
+		case FacingCardinal::SOUTH:
+			return ("south");
+		case FacingCardinal::NORTH:
+			return ("north");
+		default:
+			return ("invalid");
 	}
-	inline std::string	to_string(Facing f)
+}
+inline std::string	to_string(Facing f)
+{
+	switch (f)
 	{
-		switch (f)
-		{
-			case Facing::POS_X:
-				return ("+X");
-			case Facing::NEG_X:
-				return ("-X");
-			case Facing::POS_Y:
-				return ("+Y");
-			case Facing::NEG_Y:
-				return ("-Y");
-			case Facing::POS_Z:
-				return ("+Z");
-			case Facing::NEG_Z:
-				return ("-Z");
-			default:
-				return ("invalid");
-		}
+		case Facing::POS_X:
+			return ("+X");
+		case Facing::NEG_X:
+			return ("-X");
+		case Facing::POS_Y:
+			return ("+Y");
+		case Facing::NEG_Y:
+			return ("-Y");
+		case Facing::POS_Z:
+			return ("+Z");
+		case Facing::NEG_Z:
+			return ("-Z");
+		default:
+			return ("invalid");
 	}
-};
+}
 
 }}
