@@ -40,6 +40,7 @@ class   TextureAtlas
         /// Packs raw pixel data in, keyed by @p path (used as a lookup key, need not be a real file).
         void	add_texture(const std::string& path, const std::vector<u8>& pixels, int width, int height, int channels, GLenum format)
         {
+        	(void)format;
 	        std::vector<u8> rgba = _toRGBA(pixels, width, height, channels);
 
 	        while (width > (int)_size || height > (int)_size)
