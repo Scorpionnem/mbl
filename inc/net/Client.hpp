@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <cstdint>
 #include "math/math.hpp"
+#include "net/Packet.hpp"
 
 namespace mbl { namespace net {
 
@@ -56,6 +57,17 @@ class	Client
 				_fd = -1;
 			}
 		}
+		#define CLIENT_RTT_DELAY (1.0f / 3.0f) // 3 rtt per second
+		void	update()
+		{
+			if (_rtt_chrono.get() > CLIENT_RTT_DELAY)
+			{
+				_rtt_chrono.start();
+				_rtt_send = utils::Chrono::getTimestampMS();
+				mbl::net::Packet::RTTRequest	req;
+				send(&req, sizeof(req));
+			}
+		}
 		/// Non-blocking receive. Sets event to RECV/DISCONNECT/NONE; returns -1 on error.
 		int	recv(void* data, u64 size, Event& event, u64& received_size)
 		{
@@ -82,6 +94,12 @@ class	Client
 				event = Event::DISCONNECT;
 				return (0);
 			}
+
+			if (_private_packet(data, size))
+			{
+				event = Event::NONE;
+				return (0);
+			}
 			received_size = recv_size;
 			event = Event::RECV;
 			return (0);
@@ -91,7 +109,35 @@ class	Client
 		{
 			return (::send(_fd, data, size, MSG_WAITALL));
 		}
+		u64	rtt() {return (_rtt);}
 	private:
+		int	_private_packet(void* data, u64 size)
+		{
+			if (size < sizeof(net::Packet::Header))
+				return (0);
+
+			net::Packet::Header*	hdr = reinterpret_cast<net::Packet::Header*>(data);
+
+			if (hdr->magic != MBL_PCKT_MAGIC)
+				return (0);
+
+			switch (hdr->type)
+			{
+				case RTTREPLY_TYPE: // rtt reply
+				{
+					_rtt = utils::Chrono::getTimestampMS() - _rtt_send;
+					break ;
+				}
+				default:
+					return (0);
+			}
+			return (1);
+		}
+
+		utils::Chrono	_rtt_chrono;
+		u64	_rtt_send = 0;
+		u64	_rtt = 0;
+
 		int	_fd = -1;
 };
 }}

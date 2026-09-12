@@ -5,7 +5,7 @@
 
 namespace mbl { namespace net {
 
-#define MBL_PCKT_MAGIC = 0xCACACACA
+#define MBL_PCKT_MAGIC 0xCACACACA
 
 /// Packed wire-format structs shared between Client and Server, tagged by a leading Header. used privately by mbl
 namespace	Packet
@@ -16,15 +16,15 @@ namespace	Packet
 		u32	magic = MBL_PCKT_MAGIC;
 	} __attribute__((packed));
 
-	// type 1
+	#define RTTREQUEST_TYPE 1
 	struct	RTTRequest
 	{
-		Packet::Header	hdr = {.type = 2};
+		Packet::Header	hdr = {.type = RTTREQUEST_TYPE};
 	} __attribute__((packed));
-	// type 2
+	#define RTTREPLY_TYPE 2
 	struct	RTTReply
 	{
-		Packet::Header	hdr = {.type = 3};
+		Packet::Header	hdr = {.type = RTTREPLY_TYPE};
 	} __attribute__((packed));
 };
 
