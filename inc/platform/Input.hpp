@@ -30,6 +30,7 @@ class Input
         double  aspect() const;
         u32     width() const;
         u32     height() const;
+        vec2i     size() const;
 
         const std::string   &textInput() const {return (_textInput);};
 

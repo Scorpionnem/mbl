@@ -1,16 +1,17 @@
 #include "ui/ui.hpp"
 
-void	mbl::ui::progress_bar(float advance, vec2i pos, vec2i size, Anchor anchor)
+void	mbl::ui::progress_bar(float advance, vec2f pos, vec2f size, Anchor anchor)
 {
 	advance = std::clamp(advance, 0.0f, 1.0f);
 
-	vec2i spos;
-    vec2i ssize;
-    scalePosAndSize(spos, ssize, pos, size, anchor);
+	vec2f ssize = size * mbl::ui::scale;
+    vec2f spos = pos * mbl::ui::scale + ((vec2f(ui::input_ptr->size()) * anchor) - (ssize * anchor));
+    // scalePosAndSize(spos, ssize, pos, size, anchor);
 
     mbl::ui::draws.push_back({.pos = spos, .size = ssize, .hovered = false});
 
-    scalePosAndSize(spos, ssize, pos, vec2i(size.x() * advance, size.y()), anchor);
+    vec3f adv_ssize = vec2f(ssize.x() * advance, ssize.y());
+    vec3f adv_spos = spos;
 
-    mbl::ui::draws.push_back({.pos = spos, .size = ssize, .hovered = true});
+    mbl::ui::draws.push_back({.pos = adv_spos, .size = adv_ssize, .hovered = true});
 }

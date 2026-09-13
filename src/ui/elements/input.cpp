@@ -1,10 +1,10 @@
 #include "ui/ui.hpp"
 
-bool    mbl::ui::input(const std::string& label, std::string& input, vec2i pos, vec2i size, Anchor anchor)
+bool    mbl::ui::input(const std::string& label, std::string& input, vec2f pos, vec2f size, Anchor anchor)
 {
-	vec2i spos;
-	vec2i ssize;
-    scalePosAndSize(spos, ssize, pos, size, anchor);
+	vec2f ssize = size * mbl::ui::scale;
+    vec2f spos = pos * mbl::ui::scale + ((vec2f(ui::input_ptr->size()) * anchor) - (ssize * anchor));
+    // scalePosAndSize(spos, ssize, pos, size, anchor);
 
     bool	hovered = isOnBox(spos, ssize);
     bool	focused = mbl::ui::focused_text_input == label;
@@ -14,7 +14,7 @@ bool    mbl::ui::input(const std::string& label, std::string& input, vec2i pos, 
     std::string	render_input = input;
     if (focused)
     	render_input += "_";
-    centeredScaledTextY(render_input, pos, size, anchor);
+    // centeredScaledTextY(render_input, pos, size, anchor);
 
     if (mbl::ui::input_ptr->wasPressed(SDL_BUTTON_LEFT))
     {

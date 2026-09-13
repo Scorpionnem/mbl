@@ -18,54 +18,52 @@ namespace mbl {
 /// functions (text/button/toggle/input/slider/progress_bar) to queue draws, then render().
 /// Positions/sizes are given in a virtual target resolution (setTargetSize()) and scaled
 /// to fit the actual window.
+
+
 class ui
 {
     public:
-        /// Which corner/point of the target rect `pos` refers to.
-        enum class Anchor
-        {
-            CENTER,
-            TOP_LEFT,
-            TOP_RIGHT,
-            BOTTOM_LEFT,
-            BOTTOM_RIGHT,
-        };
+		using Anchor = vec2f;
+		#define	ANCHOR_TOP_LEFT vec2f(0, 0)
+		#define	ANCHOR_BOTTOM_LEFT vec2f(0, 1)
+		#define	ANCHOR_TOP_RIGHT vec2f(1, 0)
+		#define	ANCHOR_BOTTOM_RIGHT vec2f(1, 1)
+		#define	ANCHOR_CENTER vec2f(0.5, 0.5)
 
         /// Loads the bitmap font used to render all text.
         static void    init(const std::string& font_path);
-        static void	destroy();
+        static void		destroy();
+
         /// Starts a new frame; must be called before any widget function.
         static void    beginFrame(const platform::Input& input);
         /// Draws everything queued by widget calls since beginFrame().
         static void    render();
 
-        /// Sets the virtual resolution that widget positions/sizes are expressed in.
-        static void    setTargetSize(u32 width, u32 height);
-        static void    setTargetFontScale(u32 scale);
-
         /// Current pixel scale factor from virtual to real window size.
         static float	getScale();
-        static u32	getFontSizeY();
-        static u32	getFontSizeX(char c);
-        static u32	getFontSizeX(const std::string &s);
+        static u32		getFontSizeY();
+        static u32		getFontSizeX(char c);
+        static u32		getFontSizeX(const std::string &s);
 
-        static void	text(const std::string& label, vec2i pos, Anchor anchor = Anchor::CENTER, vec3f color = vec3f(1), bool background = false, vec3f background_color = vec3f(1));
+        static void	text(const std::string& label, vec2f pos, Anchor anchor = vec2f(0.5), vec3f color = vec3f(1), bool background = false, vec3f background_color = vec3f(1));
         /// advance in [0, 1].
-        static void	progress_bar(float advance, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
+        static void	progress_bar(float advance, vec2f pos, vec2f size, Anchor anchor = vec2f(0.5));
         /// Returns true on the frame the button is clicked.
-        static bool    button(const std::string& label, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
+        static bool	button(const std::string& label, vec2f pos, vec2f size, Anchor anchor = vec2f(0.5));
         /// Toggles state on click; returns the resulting state.
-        static bool	toggle(const std::string& label, bool& state, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
+        static bool	toggle(const std::string& label, bool& state, vec2f pos, vec2f size, Anchor anchor = vec2f(0.5));
         /// Editable text field; returns true while it has focus.
-        static bool    input(const std::string& label, std::string& input, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
+        static bool	input(const std::string& label, std::string& input, vec2f pos, vec2f size, Anchor anchor = vec2f(0.5));
         /// Draggable slider over [min, max]; returns true while being dragged.
-        static bool	slider(const std::string& label, int& input, int min, int max, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
+        static bool	slider(const std::string& label, int& input, int min, int max, vec2f pos, vec2f size, Anchor anchor = vec2f(0.5));
+
     private:
         static vec2i	anchorOrigin(vec2i ssize, ui::Anchor anchor);
+        static void		scalePosAndSize(vec2i& spos, vec2i& ssize, vec2i pos, vec2i size, ui::Anchor anchor);
+        static void		centeredScaledTextY(const std::string& label, vec2i pos, vec2i size, ui::Anchor anchor);
+        static void		centeredScaledText(const std::string& label, vec2i pos, vec2i size, ui::Anchor anchor);
+
         static bool	isOnBox(vec2i spos, vec2i ssize);
-        static void	scalePosAndSize(vec2i& spos, vec2i& ssize, vec2i pos, vec2i size, ui::Anchor anchor);
-        static void	centeredScaledTextY(const std::string& label, vec2i pos, vec2i size, ui::Anchor anchor);
-        static void	centeredScaledText(const std::string& label, vec2i pos, vec2i size, ui::Anchor anchor);
     private:
         struct  DrawInfo
         {
@@ -91,10 +89,6 @@ class ui
         };
     private:
         static const platform::Input* input_ptr;
-
-        static u32 target_width;
-        static u32 target_height;
-        static u32 target_font_scale;
 
         static float    scale;
         static float    offset_x;

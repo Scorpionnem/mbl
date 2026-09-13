@@ -2,17 +2,13 @@
 
 const mbl::platform::Input* mbl::ui::input_ptr;
 
-u32 mbl::ui::target_width;
-u32 mbl::ui::target_height;
-u32 mbl::ui::target_font_scale = 1;
-
-float    mbl::ui::scale;
+float    mbl::ui::scale = 2;
 float    mbl::ui::offset_x;
 float    mbl::ui::offset_y;
 
-mbl::render::Mesh    mbl::ui::rect_mesh;
-mbl::render::Shader  mbl::ui::rect_shader;
-mbl::render::Shader  mbl::ui::text_shader;
+mbl::render::Mesh	mbl::ui::rect_mesh;
+mbl::render::Shader	mbl::ui::rect_shader;
+mbl::render::Shader	mbl::ui::text_shader;
 mbl::render::Font	mbl::ui::font;
 
 std::vector<mbl::ui::DrawInfo>		mbl::ui::draws;
@@ -20,17 +16,6 @@ std::vector<mbl::ui::TextDrawInfo>	mbl::ui::text_draws;
 
 std::string	mbl::ui::focused_text_input;
 std::string	mbl::ui::dragging_slider;
-
-void	mbl::ui::setTargetFontScale(u32 scale)
-{
-	mbl::ui::target_font_scale = scale;
-}
-
-void    mbl::ui::setTargetSize(u32 width, u32 height)
-{
-    mbl::ui::target_width = width;
-    mbl::ui::target_height = height;
-}
 
 void	mbl::ui::destroy()
 {
@@ -59,38 +44,9 @@ void    mbl::ui::init(const std::string& font_path)
 	mbl::ui::text_shader.load("assets/shaders/ui/text.vert", "assets/shaders/ui/text.frag");
 }
 
-vec2i	mbl::ui::anchorOrigin(vec2i ssize, mbl::ui::Anchor anchor)
-{
-    switch (anchor)
-    {
-        case mbl::ui::Anchor::TOP_LEFT:
-            return (vec2i(0, 0));
-        case mbl::ui::Anchor::TOP_RIGHT:
-        return (vec2i(mbl::ui::input_ptr->width() - ssize.x(), 0));
-        case mbl::ui::Anchor::BOTTOM_LEFT:
-        return (vec2i(0, mbl::ui::input_ptr->height() - ssize.y()));
-        case mbl::ui::Anchor::BOTTOM_RIGHT:
-        return (vec2i(mbl::ui::input_ptr->width() - ssize.x(), mbl::ui::input_ptr->height() - ssize.y()));
-        default:
-            return (vec2i(mbl::ui::offset_x, mbl::ui::offset_y));
-    }
-}
-
-float	mbl::ui::getScale()
-{
-	float scaleX = static_cast<float>(mbl::ui::input_ptr->width()) / mbl::ui::target_width;
-	float scaleY = static_cast<float>(mbl::ui::input_ptr->height()) / mbl::ui::target_height;
-
-	return (std::max(1.0f, std::round(std::min(scaleX, scaleY))));
-}
-
 void    mbl::ui::beginFrame(const mbl::platform::Input& input)
 {
     mbl::ui::input_ptr = &input;
-
-    mbl::ui::scale = getScale();
-    mbl::ui::offset_x = (mbl::ui::input_ptr->width()  - mbl::ui::target_width  * mbl::ui::scale) * 0.5f;
-    mbl::ui::offset_y = (mbl::ui::input_ptr->height() - mbl::ui::target_height * mbl::ui::scale) * 0.5f;
 }
 
 void    mbl::ui::render()
@@ -153,40 +109,17 @@ void    mbl::ui::render()
 
 u32	mbl::ui::getFontSizeY()
 {
-	return (mbl::ui::font.get_char_size() * mbl::ui::target_font_scale);
+	return (mbl::ui::font.get_char_size());
 }
 
 u32	mbl::ui::getFontSizeX(char c)
 {
-	return (mbl::ui::font.get_width(c) * mbl::ui::target_font_scale);
+	return (mbl::ui::font.get_width(c));
 }
 
 u32	mbl::ui::getFontSizeX(const std::string &s)
 {
-	return (mbl::ui::font.get_width(s) * mbl::ui::target_font_scale);
-}
-
-void	mbl::ui::centeredScaledText(const std::string& label, vec2i pos, vec2i size, mbl::ui::Anchor anchor)
-{
-	vec2i	text_pos;
-    text_pos.x() = pos.x() + size.x() / 2 - (mbl::ui::font.get_width(label) * (int)mbl::ui::target_font_scale) / 2;
-    text_pos.y() = pos.y() + size.y() / 2 - (mbl::ui::font.get_char_size() * (int)mbl::ui::target_font_scale) / 2;
-    mbl::ui::text(label, text_pos, anchor);
-}
-
-void	mbl::ui::centeredScaledTextY(const std::string& label, vec2i pos, vec2i size, mbl::ui::Anchor anchor)
-{
-	vec2i	text_pos;
-    text_pos.x() = pos.x();
-    text_pos.y() = pos.y() + size.y() / 2 - (mbl::ui::font.get_char_size() * (int)mbl::ui::target_font_scale) / 2;
-    mbl::ui::text(label, text_pos, anchor);
-}
-
-void	mbl::ui::scalePosAndSize(vec2i& spos, vec2i& ssize, vec2i pos, vec2i size, mbl::ui::Anchor anchor)
-{
-	ssize = vec2i(size.x() * mbl::ui::scale, size.y() * mbl::ui::scale);
-    vec2i origin = anchorOrigin(ssize, anchor);
-    spos = vec2i(pos.x() * mbl::ui::scale + origin.x(), pos.y() * mbl::ui::scale + origin.y());
+	return (mbl::ui::font.get_width(s));
 }
 
 bool	mbl::ui::isOnBox(vec2i spos, vec2i ssize)

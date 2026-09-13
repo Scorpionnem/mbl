@@ -88,6 +88,11 @@ u32    mbl::platform::Input::width() const
     return (_width);
 }
 
+vec2i	mbl::platform::Input::size() const
+{
+	return (vec2i(_width, _height));
+}
+
 u32    mbl::platform::Input::height() const
 {
     return (_height);
