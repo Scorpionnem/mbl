@@ -4,3 +4,5 @@
 
 #include "Client.hpp"
 #include "Server.hpp"
+#include "MulticastSender.hpp"
+#include "MulticastReceiver.hpp"
