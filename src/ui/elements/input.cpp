@@ -14,7 +14,9 @@ bool    mbl::ui::input(const std::string& label, std::string& input, vec2f pos, 
     std::string	render_input = input;
     if (focused)
     	render_input += "_";
-    // centeredScaledTextY(render_input, pos, size, anchor);
+
+   	vec2f	text_pos = spos + ssize / 2 - vec2f(mbl::ui::font.get_width(label), mbl::ui::font.get_char_size()) * ui::scale / 2;
+	mbl::ui::raw_text(label, text_pos, ui::scale);
 
     if (mbl::ui::input_ptr->wasPressed(SDL_BUTTON_LEFT))
     {

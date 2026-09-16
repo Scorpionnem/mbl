@@ -26,3 +26,29 @@ void	mbl::ui::text(const std::string& label, vec2f pos, Anchor anchor, vec3f col
 		cursor_x += width * mbl::ui::scale;
 	}
 }
+
+void	mbl::ui::raw_text(const std::string& str, vec2f pos, float scale, vec3f color, bool background, vec3f background_color)
+{
+	int		height = mbl::ui::font.get_char_size();
+
+	float	base_x = pos.x();
+	float	base_y = pos.y();
+	float	cursor_x = base_x;
+
+	for (char c : str)
+	{
+		int		width = mbl::ui::font.get_width(c);
+
+		std::string key(1, c);
+
+		if (mbl::ui::font.get_atlas().has(key))
+		{
+			vec2f pos = vec2f(cursor_x, base_y);
+			vec2f size = vec2f(width * scale, height * scale);
+
+			mbl::ui::text_draws.push_back({.pos = pos, .size = size, .uv = mbl::ui::font.get_atlas().uv(key), .background = background, .color = color, .background_color = background_color});
+		}
+
+		cursor_x += width * scale;
+	}
+}

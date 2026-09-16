@@ -58,6 +58,7 @@ class ui
         static bool	slider(const std::string& label, int& input, int min, int max, vec2f pos, vec2f size, Anchor anchor = vec2f(0.5));
 
     private:
+    	static void	raw_text(const std::string& str, vec2f pos, float scale, vec3f color = vec3f(1), bool background = false, vec3f background_color = vec3f(1));
         static vec2i	anchorOrigin(vec2i ssize, ui::Anchor anchor);
         static void		scalePosAndSize(vec2i& spos, vec2i& ssize, vec2i pos, vec2i size, ui::Anchor anchor);
         static void		centeredScaledTextY(const std::string& label, vec2i pos, vec2i size, ui::Anchor anchor);
