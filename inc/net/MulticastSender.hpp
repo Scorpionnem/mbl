@@ -23,7 +23,7 @@ class	MulticastSender
 			_serv_addr = {};
 		    _serv_addr.sin_family = AF_INET;
 		    _serv_addr.sin_port = htons(port);
-			if (inet_pton(AF_INET, addr, &_serv_addr.sin_addr) == -1)
+			if (inet_pton(AF_INET, addr, &_serv_addr.sin_addr) != 1)
 				return (-1);
 
 			return (0);
@@ -31,6 +31,7 @@ class	MulticastSender
 		void	close()
 		{
 			::close(_fd);
+			_fd = -1;
 		}
 		int	send(const void* data, u64 size)
 		{

@@ -12,7 +12,7 @@ namespace	Packet
 {
 	struct	Header
 	{
-		u32	type;
+		u32	type = -1;
 		u32	magic = MBL_PCKT_MAGIC;
 	} __attribute__((packed));
 

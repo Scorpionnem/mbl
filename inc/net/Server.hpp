@@ -123,7 +123,7 @@ class	Server
 					return (0);
 				}
 
-				if (_private_packet(fd, data, recv_size))
+				if (_private_packet(pfd.fd, data, recv_size))
 				{
 					event = Event::NONE;
 					return (0);
@@ -194,7 +194,7 @@ class	Server
 				}
 				case RTTREQUEST_TYPE:
 				{
-					mbl::net::Packet::RTTReply	req;
+					mbl::net::Packet::RTTReply	req = {};
 					send(fd, &req, sizeof(req));
 					break ;
 				}
@@ -209,10 +209,10 @@ class	Server
 			_clients.erase(std::remove(_clients.begin(), _clients.end(), fd), _clients.end());
 		}
 
-		int					_port;
+		int					_port = 0;
 		std::string			_addr;
 
-		int					_fd;
+		int					_fd = -1;
 		std::vector<int>	_clients;
 
 		std::vector<struct pollfd>	_pollfds;
