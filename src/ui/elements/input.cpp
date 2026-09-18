@@ -9,14 +9,23 @@ bool    mbl::ui::input(const std::string& label, std::string& input, vec2f pos, 
     bool	hovered = isOnBox(spos, ssize);
     bool	focused = mbl::ui::focused_text_input == label;
 
-    mbl::ui::draws.push_back({.pos = spos, .size = ssize, .hovered = focused});
+    mbl::ui::draws.push_back({.pos = spos, .size = ssize, .texture = hovered || focused || hovered ? &text_field_highlighted_texture : &text_field_texture});
 
     std::string	render_input = input;
     if (focused)
     	render_input += "_";
 
-   	vec2f	text_pos = spos + ssize / 2 - vec2f(mbl::ui::font.get_width(label), mbl::ui::font.get_char_size()) * ui::scale / 2;
-	mbl::ui::raw_text(label, text_pos, ui::scale);
+    if (input.empty())
+    {
+   		vec2f	text_pos = spos + ssize / 2 - vec2f(mbl::ui::font.get_width(label), mbl::ui::font.get_char_size()) * ui::scale / 2;
+    	mbl::ui::raw_text(label, text_pos, ui::scale, vec3f(0.6));
+    }
+    else
+    {
+    	float border_size = 3;
+  		vec2f	text_pos = spos + vec2f(0, ssize.y() / 2.0) - vec2f(-border_size * ui::scale, mbl::ui::font.get_char_size() * ui::scale / 2);
+   		mbl::ui::raw_text(input, text_pos, ui::scale);
+    }
 
     if (mbl::ui::input_ptr->wasPressed(SDL_BUTTON_LEFT))
     {

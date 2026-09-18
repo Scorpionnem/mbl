@@ -70,13 +70,7 @@ class ui
         {
             vec2i   pos;
             vec2i   size;
-            bool	hovered;
-            bool	textured = false;
-            vec4f	uv = vec4f(0, 0, 1, 1);
-            bool	text = false;
-            bool	text_background = false;
-            vec3f	text_color = vec3f(1);
-            vec3f	text_background_color = vec3f(1);
+            render::Texture	*texture;
         };
         struct	TextDrawInfo
         {
@@ -95,6 +89,12 @@ class ui
         static float    offset_x;
         static float    offset_y;
 
+        static render::Texture	button_texture;
+        static render::Texture	button_highlighted_texture;
+        static render::Texture	text_field_highlighted_texture;
+        static render::Texture	text_field_texture;
+        static render::Texture	progress_texture;
+        static render::Texture	progress_background_texture;
         static render::Mesh    rect_mesh;
         static render::Shader  rect_shader;
         static render::Shader	text_shader;

@@ -11,6 +11,15 @@ mbl::render::Shader	mbl::ui::rect_shader;
 mbl::render::Shader	mbl::ui::text_shader;
 mbl::render::Font	mbl::ui::font;
 
+mbl::render::Texture	mbl::ui::button_texture;
+mbl::render::Texture	mbl::ui::button_highlighted_texture;
+
+mbl::render::Texture	mbl::ui::text_field_texture;
+mbl::render::Texture	mbl::ui::text_field_highlighted_texture;
+
+mbl::render::Texture	mbl::ui::progress_texture;
+mbl::render::Texture	mbl::ui::progress_background_texture;
+
 std::vector<mbl::ui::DrawInfo>		mbl::ui::draws;
 std::vector<mbl::ui::TextDrawInfo>	mbl::ui::text_draws;
 
@@ -35,6 +44,21 @@ void    mbl::ui::init(const std::string& font_path)
 		{1.0f, 0.0f},
 		{1.0f, 1.0f}
 	};
+
+    mbl::loader::texture::stb::load("assets/textures/ui/progress.png", ui::progress_background_texture);
+    ui::progress_background_texture.upload();
+    mbl::loader::texture::stb::load("assets/textures/ui/progress_background.png", ui::progress_texture);
+    ui::progress_texture.upload();
+
+    mbl::loader::texture::stb::load("assets/textures/ui/button_highlighted.png", ui::button_highlighted_texture);
+    ui::button_highlighted_texture.upload();
+    mbl::loader::texture::stb::load("assets/textures/ui/button.png", ui::button_texture);
+    ui::button_texture.upload();
+
+    mbl::loader::texture::stb::load("assets/textures/ui/text_field_highlighted.png", ui::text_field_highlighted_texture);
+    ui::text_field_highlighted_texture.upload();
+    mbl::loader::texture::stb::load("assets/textures/ui/text_field.png", ui::text_field_texture);
+    ui::text_field_texture.upload();
 
 	mbl::ui::rect_mesh.set_sizeof_layout(sizeof(vec2f));
 	mbl::ui::rect_mesh.add_vertex_layout(0, 2, GL_FLOAT, 0);
@@ -64,20 +88,15 @@ void    mbl::ui::render()
         rect_shader.setMat4("uModel", model);
         rect_shader.setMat4("uProj", mat4f::ortho(0.0f, mbl::ui::input_ptr->width(), mbl::ui::input_ptr->height(), 0.0f, -1.0f, 1.0f));
         rect_shader.setInt("uTex", 0);
-        rect_shader.setInt("uUseTex", d.textured ? 1 : 0);
-        rect_shader.setVec3("uColor", d.text_color);
-        rect_shader.setInt("uBackground", d.text_background);
-        rect_shader.setVec3("uBackgroundColor", d.text_background_color);
 
-        if (d.textured)
-        {
-            mbl::ui::font.get_atlas().bind(0);
-            rect_shader.setVec4("uUV", d.uv);
-        }
-        else
-        {
-            rect_shader.setVec3("uColor", d.hovered ? vec3f(0, 1, 0) : vec3f(1, 0, 0));
-        }
+        rect_shader.setVec2("uRectSize", size / ui::scale);
+        rect_shader.setVec2("uTexSize", vec2f(200, 20));
+        rect_shader.setVec2("uBorder", vec2f(3));
+
+		if (d.texture)
+			d.texture->bind(0);
+		else
+		    rect_shader.setVec3("uColor", vec3f(0, 1, 0));
 
         mbl::ui::rect_mesh.draw(GL_TRIANGLES);
     }

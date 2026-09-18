@@ -8,10 +8,10 @@ void	mbl::ui::progress_bar(float advance, vec2f pos, vec2f size, Anchor anchor)
     vec2f spos = pos * mbl::ui::scale + ((vec2f(ui::input_ptr->size()) * anchor) - (ssize * anchor));
     // scalePosAndSize(spos, ssize, pos, size, anchor);
 
-    mbl::ui::draws.push_back({.pos = spos, .size = ssize, .hovered = false});
+    mbl::ui::draws.push_back({.pos = spos, .size = ssize, .texture = &progress_texture});
 
     vec3f adv_ssize = vec2f(ssize.x() * advance, ssize.y());
     vec3f adv_spos = spos;
 
-    mbl::ui::draws.push_back({.pos = adv_spos, .size = adv_ssize, .hovered = true});
+    mbl::ui::draws.push_back({.pos = adv_spos, .size = adv_ssize, .texture = &progress_background_texture});
 }

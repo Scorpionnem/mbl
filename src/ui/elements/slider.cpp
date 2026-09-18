@@ -18,8 +18,10 @@ bool	mbl::ui::slider(const std::string& label, int& input, int min, int max, vec
     bool	hovered = isOnBox(spos, ssize);
     bool	dragging = mbl::ui::dragging_slider == label;
 
-    mbl::ui::draws.push_back({.pos = spos, .size = ssize, .hovered = false});
-    mbl::ui::draws.push_back({.pos = sliderspos, .size = sliderssize, .hovered = hovered || dragging});
+    mbl::ui::draws.push_back({.pos = spos, .size = ssize, .texture = hovered || dragging ? &button_highlighted_texture : &button_texture});
+
+    (void)sliderssize;
+    // mbl::ui::draws.push_back({.pos = sliderspos, .size = sliderssize, .hovered = hovered || dragging});
 
     // centeredScaledText(std::to_string(input), pos, size, anchor);
 
