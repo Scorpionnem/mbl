@@ -77,7 +77,9 @@ class	Client
 				return (-1);
 			}
 
-			ssize_t	recv_size = ::recv(_fd, data, size, MSG_DONTWAIT);
+
+			Packet::SizeHeader	hdr = {};
+			ssize_t	recv_size = ::recv(_fd, &hdr, sizeof(hdr), MSG_DONTWAIT);
 			if (recv_size == -1)
 			{
 				if (errno == EAGAIN || errno == EWOULDBLOCK)
@@ -85,9 +87,19 @@ class	Client
 					event = Event::NONE;
 					return (0);
 				}
-
 				return (-1);
 			}
+
+			if (hdr.magic != MBL_PCKT_MAGIC)
+				return (-1);
+
+			if (size < hdr.size)
+				return (-1);
+
+			recv_size = ::recv(_fd, data, std::min(size, hdr.size), MSG_WAITALL);
+			if (recv_size == -1)
+				return (-1);
+
 			if (recv_size == 0)
 			{
 				disconnect();
@@ -107,7 +119,11 @@ class	Client
 		/// Blocking send (waits until all `size` bytes are sent).
 		int	send(const void* data, u64 size)
 		{
-			return (::send(_fd, data, size, MSG_WAITALL));
+			Packet::SizeHeader	hdr = {.size = size};
+			if (::send(_fd, &hdr, sizeof(hdr), MSG_WAITALL | MSG_NOSIGNAL) == -1)
+				return (-1);
+
+			return (::send(_fd, data, size, MSG_WAITALL | MSG_NOSIGNAL));
 		}
 		u64	rtt() {return (_rtt);}
 	private:

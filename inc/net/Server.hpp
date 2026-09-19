@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <map>
 #include <cerrno>
 #include <cstdint>
 #include <arpa/inet.h>
@@ -23,6 +24,10 @@ namespace mbl { namespace net {
 class	Server
 {
 	public:
+		struct Client
+		{
+			int				fd = -1;
+		};
 		enum Event
 		{
 			RECV,
@@ -71,10 +76,10 @@ class	Server
 			listen_pfd.events = POLLIN;
 			_pollfds.push_back(listen_pfd);
 
-			for (int fd : _clients)
+			for (auto& c : _clients)
 			{
 				struct pollfd	pfd = {};
-				pfd.fd = fd;
+				pfd.fd = c.fd;
 				pfd.events = POLLIN;
 				_pollfds.push_back(pfd);
 			}
@@ -104,19 +109,32 @@ class	Server
 					if (client_fd == -1)
 						continue ;
 
-					_clients.push_back(client_fd);
+					_clients.push_back({.fd = client_fd});
 					fd = client_fd;
 					event = Event::CONNECTION;
 					return (0);
 				}
 
-				ssize_t	recv_size = ::recv(pfd.fd, data, size, MSG_DONTWAIT);
-
+				Packet::SizeHeader	hdr = {};
+				ssize_t	recv_size = ::recv(pfd.fd, &hdr, sizeof(hdr), MSG_DONTWAIT);
 				if (recv_size <= 0)
 				{
 					if (recv_size == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
 						continue ;
 
+					fd = pfd.fd;
+					disconnect(pfd.fd);
+					event = Event::DISCONNECT;
+					return (0);
+				}
+				if (hdr.magic != MBL_PCKT_MAGIC)
+					continue ;
+
+				if (size < hdr.size)
+					throw std::runtime_error("recv: buffer too small\n");
+				recv_size = ::recv(pfd.fd, data, std::min(size, hdr.size), MSG_WAITALL);
+				if (recv_size <= 0)
+				{
 					fd = pfd.fd;
 					disconnect(pfd.fd);
 					event = Event::DISCONNECT;
@@ -141,34 +159,38 @@ class	Server
 		/// Non-blocking send to one client.
 		int	send(int fd, const void* data, u64 size)
 		{
-			return (::send(fd, data, size, MSG_DONTWAIT));
+			Packet::SizeHeader	hdr = {.size = size};
+			if (::send(fd, &hdr, sizeof(hdr), MSG_WAITALL | MSG_NOSIGNAL) == -1)
+				return (-1);
+
+			return (::send(fd, data, size, MSG_WAITALL | MSG_NOSIGNAL));
 		}
 		/// Non-blocking send to every connected client.
 		int	send_all(const void* data, u64 size)
 		{
-			for (int fd : _clients)
+			for (auto& c : _clients)
 			{
-				if (send(fd, data, size) == -1)
+				if (send(c.fd, data, size) == -1)
 					return (-1);
 			}
 			return (0);
 		}
 		int	send_all_except(int fd, const void* data, u64 size)
 		{
-			for (int f : _clients)
+			for (auto& c : _clients)
 			{
-				if (f == fd)
+				if (c.fd == fd)
 					continue ;
 
-				if (send(f, data, size) == -1)
+				if (send(c.fd, data, size) == -1)
 					return (-1);
 			}
 			return (0);
 		}
 		void	close()
 		{
-			for (int fd : _clients)
-				::close(fd);
+			for (auto& c : _clients)
+				::close(c.fd);
 			_clients.clear();
 			::close(_fd);
 		}
@@ -206,19 +228,23 @@ class	Server
 		void	disconnect(int fd)
 		{
 			::close(fd);
-			_clients.erase(std::remove(_clients.begin(), _clients.end(), fd), _clients.end());
+			_clients.erase(std::remove_if(_clients.begin(), _clients.end(), [&fd](const Server::Client& client)
+				{
+					return (fd == client.fd);
+				}), _clients.end());
 		}
 
 		int					_port = 0;
 		std::string			_addr;
 
 		int					_fd = -1;
-		std::vector<int>	_clients;
+		std::vector<Server::Client>		_clients;
 
 		std::vector<struct pollfd>	_pollfds;
 		size_t						_poll_index = 0;
 };
 }}
+
 /*
 	void	server(int port)
 	{

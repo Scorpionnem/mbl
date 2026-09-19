@@ -10,6 +10,12 @@ namespace mbl { namespace net {
 /// Packed wire-format structs shared between Client and Server, tagged by a leading Header. used privately by mbl
 namespace	Packet
 {
+	struct SizeHeader
+	{
+		u64	size = 0;
+		u32	magic = MBL_PCKT_MAGIC;
+	} __attribute__((packed));
+
 	struct	Header
 	{
 		u32	type = -1;
