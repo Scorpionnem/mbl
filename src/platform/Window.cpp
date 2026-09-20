@@ -66,9 +66,15 @@ const mbl::platform::Input&    mbl::platform::Window::pollEvents()
 		if (event.type == SDL_QUIT)
 			_input._close = true;
 		else if (event.type == SDL_KEYDOWN && !event.key.repeat)
+		{
 			_input.press(event.key.keysym.sym);
+			_input._lastKeyDown = event.key.keysym.sym;
+		}
 		else if (event.type == SDL_KEYUP)
+		{
 			_input.release(event.key.keysym.sym);
+			_input._lastKeyUp = event.key.keysym.sym;
+		}
 		else if (event.type == SDL_MOUSEBUTTONDOWN)
 			_input.press(event.button.button);
 		else if (event.type == SDL_MOUSEBUTTONUP)

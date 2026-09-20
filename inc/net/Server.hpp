@@ -197,6 +197,14 @@ class	Server
 
 		const std::string&	addr() const {return (_addr);}
 		int	port() const {return (_port);}
+		void	disconnect(int fd)
+		{
+			::close(fd);
+			_clients.erase(std::remove_if(_clients.begin(), _clients.end(), [&fd](const Server::Client& client)
+				{
+					return (fd == client.fd);
+				}), _clients.end());
+		}
 	private:
 		int	_private_packet(int fd, void* data, u64 size)
 		{
@@ -224,14 +232,6 @@ class	Server
 					return (0);
 			}
 			return (1);
-		}
-		void	disconnect(int fd)
-		{
-			::close(fd);
-			_clients.erase(std::remove_if(_clients.begin(), _clients.end(), [&fd](const Server::Client& client)
-				{
-					return (fd == client.fd);
-				}), _clients.end());
 		}
 
 		int					_port = 0;

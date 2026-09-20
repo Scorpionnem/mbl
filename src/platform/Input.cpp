@@ -14,6 +14,8 @@ void    mbl::platform::Input::beginFrame()
     _mouseDX = 0.0f;
     _mouseDY = 0.0f;
     _textInput.clear();
+    _lastKeyDown = 0;
+    _lastKeyUp = 0;
 }
 
 void    mbl::platform::Input::press(int action)
@@ -86,6 +88,16 @@ double    mbl::platform::Input::aspect() const
 u32    mbl::platform::Input::width() const
 {
     return (_width);
+}
+
+int		mbl::platform::Input::lastKeyUp() const
+{
+	return (_lastKeyUp);
+}
+
+int		mbl::platform::Input::lastKeyDown() const
+{
+	return (_lastKeyDown);
 }
 
 vec2i	mbl::platform::Input::size() const

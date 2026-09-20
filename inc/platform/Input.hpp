@@ -21,6 +21,8 @@ class Input
 		float	mouseDY() const;
 		int		mouseX() const;
 		int		mouseY() const;
+		int		lastKeyUp() const;
+		int		lastKeyDown() const;
 		/// True the frame the window was asked to close.
 		bool	close() const;
 		/// True the frame the window was resized.
@@ -39,6 +41,9 @@ class Input
 		void	press(int action);
 		void	release(int action);
 		void	addMouseDelta(float dx, float dy);
+
+		int	_lastKeyUp;
+		int	_lastKeyDown;
 
 		mutable std::unordered_map<int, bool>	_down;
 		mutable std::unordered_map<int, bool>	_pressed;
