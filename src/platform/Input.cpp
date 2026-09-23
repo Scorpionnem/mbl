@@ -16,6 +16,8 @@ void    mbl::platform::Input::beginFrame()
     _textInput.clear();
     _lastKeyDown = 0;
     _lastKeyUp = 0;
+    _scrollX = 0;
+    _scrollY = 0;
 }
 
 void    mbl::platform::Input::press(int action)
@@ -93,6 +95,16 @@ u32    mbl::platform::Input::width() const
 int		mbl::platform::Input::lastKeyUp() const
 {
 	return (_lastKeyUp);
+}
+
+double	mbl::platform::Input::scrollX() const
+{
+	return (_scrollX);
+}
+
+double	mbl::platform::Input::scrollY() const
+{
+	return (_scrollY);
 }
 
 int		mbl::platform::Input::lastKeyDown() const

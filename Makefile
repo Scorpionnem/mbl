@@ -31,6 +31,7 @@ SRCS :=	src/platform/Window.cpp					\
 		src/ui/elements/slider.cpp				\
 		src/ui/elements/progress_bar.cpp		\
 		src/render/renderer/AABBRenderer.cpp	\
+		src/render/renderer/RayRenderer.cpp	\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

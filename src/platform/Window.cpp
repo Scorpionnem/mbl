@@ -89,6 +89,11 @@ const mbl::platform::Input&    mbl::platform::Window::pollEvents()
 		}
 		else if (event.type == SDL_TEXTINPUT)
 		    _input._textInput += event.text.text;
+		else if (event.type == SDL_MOUSEWHEEL)
+		{
+			_input._scrollX = event.wheel.preciseX;
+			_input._scrollY = event.wheel.preciseY;
+		}
 	}
 	SDL_GetMouseState(&_input._mouseX, &_input._mouseY);
 	_input._width = _width;

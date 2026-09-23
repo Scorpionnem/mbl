@@ -33,6 +33,8 @@ class Input
         u32     width() const;
         u32     height() const;
         vec2i     size() const;
+        double	scrollX() const;
+        double	scrollY() const;
 
         const std::string   &textInput() const {return (_textInput);};
 
@@ -52,6 +54,8 @@ class Input
 		int		_mouseX;
 		int		_mouseY;
 
+		double	_scrollX;
+		double	_scrollY;
         double  _delta;
         double  _aspect;
 

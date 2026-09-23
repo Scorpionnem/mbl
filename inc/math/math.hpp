@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <math/vec.hpp>
+#include <math/ray.hpp>
 
 /// -1, 0 or 1 depending on the sign of n.
 template <typename T>

@@ -10,3 +10,4 @@
 #include "render/Texture.hpp"
 #include "render/TextureAtlas.hpp"
 #include "render/renderer/AABBRenderer.hpp"
+#include "render/renderer/RayRenderer.hpp"
