@@ -26,11 +26,15 @@ namespace	Packet
 	struct	RTTRequest
 	{
 		Packet::Header	hdr = {.type = RTTREQUEST_TYPE};
+
+		u64	ts = 0;
 	} __attribute__((packed));
 	#define RTTREPLY_TYPE 2
 	struct	RTTReply
 	{
 		Packet::Header	hdr = {.type = RTTREPLY_TYPE};
+
+		u64	ts = 0;
 	} __attribute__((packed));
 };
 

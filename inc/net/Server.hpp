@@ -7,11 +7,13 @@
 #include <cstdint>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <poll.h>
 #include <stdbool.h>
+#include <iostream>
 #include <string>
 #include "math/math.hpp"
 #include "net/Packet.hpp"
@@ -114,6 +116,9 @@ class	Server
 
 					if (client_fd == -1)
 						continue ;
+
+					int	nodelay = 1;
+					setsockopt(client_fd, IPPROTO_TCP, TCP_NODELAY, &nodelay, sizeof(nodelay));
 
 					_clients.push_back({.fd = client_fd});
 					fd = client_fd;
@@ -224,14 +229,13 @@ class	Server
 
 			switch (hdr->type)
 			{
-				case RTTREPLY_TYPE: // rtt reply
-				{
-					break ;
-				}
 				case RTTREQUEST_TYPE:
 				{
-					mbl::net::Packet::RTTReply	req = {};
-					send(fd, &req, sizeof(req));
+					net::Packet::RTTRequest*	request_pckt = reinterpret_cast<net::Packet::RTTRequest*>(data);
+
+					mbl::net::Packet::RTTReply	repl = {};
+					repl.ts = request_pckt->ts;
+					send(fd, &repl, sizeof(repl));
 					break ;
 				}
 				default:

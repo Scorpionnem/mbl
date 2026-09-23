@@ -3,6 +3,7 @@
 #include <cerrno>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -48,6 +49,10 @@ class	Client
 			if (::connect(_fd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1)
 				return (-1);
 
+			int	nodelay = 1;
+			if (setsockopt(_fd, IPPROTO_TCP, TCP_NODELAY, &nodelay, sizeof(nodelay)) == -1)
+				return (-1);
+
 			_addr = address;
 			_port = ntohs(serv_addr.sin_port);
 			return (0);
@@ -66,8 +71,8 @@ class	Client
 			if (_rtt_chrono.get() > CLIENT_RTT_DELAY)
 			{
 				_rtt_chrono.start();
-				_rtt_send = utils::Chrono::getTimestampMS();
-				mbl::net::Packet::RTTRequest	req;
+				mbl::net::Packet::RTTRequest	req = {};
+				req.ts = utils::Chrono::getTimestampMS();
 				send(&req, sizeof(req));
 			}
 		}
@@ -146,12 +151,17 @@ class	Client
 			{
 				case RTTREPLY_TYPE: // rtt reply
 				{
-					_rtt = utils::Chrono::getTimestampMS() - _rtt_send;
+					net::Packet::RTTReply*	reply_pckt = reinterpret_cast<net::Packet::RTTReply*>(data);
+
+					_rtt = utils::Chrono::getTimestampMS() - reply_pckt->ts;
 					break ;
 				}
 				case RTTREQUEST_TYPE:
 				{
+					net::Packet::RTTRequest*	request_pckt = reinterpret_cast<net::Packet::RTTRequest*>(data);
 					mbl::net::Packet::RTTReply	req;
+
+					req.ts = request_pckt->ts;
 					send(&req, sizeof(req));
 				}
 				default:
@@ -164,7 +174,6 @@ class	Client
 		int			_port;
 
 		utils::Chrono	_rtt_chrono;
-		u64	_rtt_send = 0;
 		u64	_rtt = 0;
 
 		int	_fd = -1;

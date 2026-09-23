@@ -52,19 +52,22 @@ struct vec
 		return (std::sqrt(acc));
 	}
 
-	constexpr double	distance(const vec<N, T>& v) const
+	constexpr T	length() const {return (vec<N, T>::length(*this));}
+
+	static constexpr T distance(const vec<N, T>& v1, const vec<N, T>& v2)
 	{
-		double d;
-		double value = 0.0;
+		T value = 0.0;
 
 		for (std::size_t i = 0; i < N; i++)
-			value += (data[i] - v.data[i]) * (data[i] - v.data[i]);
+			value += (v1.data[i] - v2.data[i]) * (v1.data[i] - v2.data[i]);
 
-		d = std::sqrt(value);
-		return d;
+		return (std::sqrt(value));
 	}
 
-	constexpr T	length() const {return (vec<N, T>::length(*this));}
+	constexpr T	distance(const vec<N, T>& v) const
+	{
+		return (vec<N, T>::distance(*this, v));
+	}
 
 	/// Scaled to unit length; returns a zero vector for a zero-length input.
 	static constexpr vec<N, T>	normalize(const vec<N, T>& v)
