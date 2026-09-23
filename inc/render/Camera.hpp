@@ -18,12 +18,16 @@ struct   Camera
 
     vec3f    front() const
     {
-        float   c = std::cos(radians(pitch));
+    	return (front(yaw, pitch));
+    }
+    static vec3f front(float yaw, float pitch)
+    {
+	    float   c = std::cos(radians(pitch));
 
-        return (vec3f(
-            std::sin(radians(yaw)) * c,
-            std::sin(radians(pitch)),
-            -std::cos(radians(yaw)) * c));
+	    return (vec3f(
+	        std::sin(radians(yaw)) * c,
+	        std::sin(radians(pitch)),
+	        -std::cos(radians(yaw)) * c));
     }
 
     vec3f   pos;
