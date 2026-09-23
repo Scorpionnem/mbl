@@ -35,6 +35,8 @@ class	Server
 			CONNECTION,
 			NONE,
 		};
+
+		~Server() {close();}
 		/// Binds and listens on `port`. Returns 0 on success, -1 on error (errno set).
 		int	open(int port, int max_connections = 16)
 		{
@@ -58,11 +60,15 @@ class	Server
 			if (listen(_fd, max_connections) == -1)
 				return (-1);
 
-			char	buf[INET_ADDRSTRLEN + 1] = {};
-			inet_ntop(AF_INET, &addr.sin_addr, buf, sizeof(buf) - 1);
+			struct sockaddr_in bound;
+			socklen_t len = sizeof(bound);
+			if (getsockname(_fd, (struct sockaddr*)&bound, &len) == -1)
+    			return (-1);
 
+			char buf[INET_ADDRSTRLEN + 1] = {};
+			inet_ntop(AF_INET, &bound.sin_addr, buf, sizeof(buf) - 1);
 			_addr = buf;
-			_port = ntohs(addr.sin_port);
+			_port = ntohs(bound.sin_port);
 
 			return (0);
 		}

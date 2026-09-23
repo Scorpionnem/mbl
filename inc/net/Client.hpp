@@ -47,6 +47,9 @@ class	Client
 
 			if (::connect(_fd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1)
 				return (-1);
+
+			_addr = address;
+			_port = ntohs(serv_addr.sin_port);
 			return (0);
 		}
 		void	disconnect()
@@ -57,7 +60,7 @@ class	Client
 				_fd = -1;
 			}
 		}
-		#define CLIENT_RTT_DELAY (1.0f / 3.0f) // 3 rtt per second
+		#define CLIENT_RTT_DELAY (1.0f / 2.0f)
 		void	update()
 		{
 			if (_rtt_chrono.get() > CLIENT_RTT_DELAY)
@@ -126,6 +129,8 @@ class	Client
 			return (::send(_fd, data, size, MSG_WAITALL | MSG_NOSIGNAL));
 		}
 		u64	rtt() {return (_rtt);}
+		std::string	addr() {return (_addr);}
+		int	port() {return (_port);}
 	private:
 		int	_private_packet(void* data, u64 size)
 		{
@@ -154,6 +159,9 @@ class	Client
 			}
 			return (1);
 		}
+
+		std::string	_addr;
+		int			_port;
 
 		utils::Chrono	_rtt_chrono;
 		u64	_rtt_send = 0;

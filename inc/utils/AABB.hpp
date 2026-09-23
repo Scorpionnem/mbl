@@ -10,13 +10,13 @@ namespace mbl { namespace utils {
 template <std::size_t N, typename T>
 struct  AABB
 {
-    vec<N, T>   min;
-    vec<N, T>   max;
+    vec<N, T>   pos;
+    vec<N, T>   size;
 
     static bool    intersects(const AABB<N, T>& a, const AABB<N, T>& b)
     {
         for (std::size_t i = 0; i < N; i++)
-            if (a.min.data[i] > b.max.data[i] || a.max.data[i] < b.min.data[i])
+            if (a.pos.data[i] + a.size.data[i] < b.pos.data[i] || a.pos.data[i] > b.pos.data[i] + b.size.data[i])
                 return (false);
         return (true);
     }
@@ -24,46 +24,10 @@ struct  AABB
     static bool    contains(const AABB<N, T>& box, const vec<N, T>& point)
     {
         for (std::size_t i = 0; i < N; i++)
-            if (point.data[i] < box.min.data[i] || point.data[i] > box.max.data[i])
+            if (point.data[i] < box.pos.data[i] || point.data[i] > box.pos.data[i] + box.size.data[i])
                 return (false);
         return (true);
     }
-
-    /// Builds a wireframe (GL_LINES) unit-cube mesh for drawing a 3D box; N == 3 only.
-    static void	gen_aabb3_mesh(render::Mesh& mesh) requires (N == 3)
-	{
-		mesh.set_sizeof_layout(2 * sizeof(vec3f));
-		mesh.add_vertex_layout(0, 3, GL_FLOAT, 0);
-		mesh.add_vertex_layout(1, 3, GL_FLOAT, sizeof(vec3f));
-
-		vec3f vertices[] = {
-			{0,0,0}, {0,0,0}, {1,0,0}, {0,0,0},
-			{0,0,0}, {0,0,0}, {0,1,0}, {0,0,0},
-			{0,0,0}, {0,0,0}, {0,0,1}, {0,0,0},
-			{0,1,0}, {0,0,0}, {1,1,0}, {0,0,0},
-			{0,1,0}, {0,0,0}, {0,1,1}, {0,0,0},
-			{1,1,1}, {0,0,0}, {0,1,1}, {0,0,0},
-			{1,1,1}, {0,0,0}, {1,0,1}, {0,0,0},
-			{1,1,1}, {0,0,0}, {1,1,0}, {0,0,0},
-			{0,1,1}, {0,0,0}, {0,0,1}, {0,0,0},
-			{0,0,1}, {0,0,0}, {1,0,1}, {0,0,0},
-			{1,0,1}, {0,0,0}, {1,0,0}, {0,0,0},
-			{1,1,0}, {0,0,0}, {1,0,0}, {0,0,0},
-		};
-
-		mesh.add_vertex_data(reinterpret_cast<u8*>(vertices), sizeof(vertices));
-	}
-
-	/// Draws `aabb` as a wireframe box using a mesh from gen_aabb3_mesh().
-	template <typename TT>
-	static void draw_aabb3(AABB<3, TT> aabb, render::Camera& cam, render::Shader& shader, render::Mesh& mesh)
-	{
-		shader.bind();
-		shader.setMat4("uProj", cam.getProjectionMatrix());
-		shader.setMat4("uView", cam.getViewMatrix());
-		shader.setMat4("uModel", mat4f::translate(aabb.min) * mat4f::scale(aabb.max));
-		mesh.draw(GL_LINES);
-	}
 };
 
 using aabb2i = AABB<2, int>;

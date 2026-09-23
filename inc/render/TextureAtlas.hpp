@@ -57,7 +57,7 @@ class   TextureAtlas
 	            if (_findSpot(size, pos))
 	            {
 	                _insertTexture(rgba, width, height, pos);
-	                _uvs[path] = utils::aabb2i{.min = pos, .max = pos + size - vec2i(1)};
+	                _uvs[path] = utils::aabb2i{.pos = pos, .size = size - vec2i(1)};
 	                return ;
 	            }
 	            _sizeUp();
@@ -88,7 +88,7 @@ class   TextureAtlas
             const utils::aabb2i&   box = it->second;
             float           s = (float)_size;
 
-            return (vec4f(box.min.x() / s, box.min.y() / s, (box.max.x() + 1) / s, (box.max.y() + 1) / s));
+            return (vec4f(box.pos.x() / s, box.pos.y() / s, (box.pos.x() + box.size.x() + 1) / s, (box.pos.y() + box.size.y() + 1) / s));
         }
 
         const Texture&  texture() const {return (_texture);}
@@ -109,7 +109,7 @@ class   TextureAtlas
             {
                 for (last_y = 0; last_y + size.y() <= (int)_size; last_y += smallest)
                 {
-                    utils::aabb2i  target_box = {.min = vec2i(last_x, last_y), .max = vec2i(last_x + size.x() - 1, last_y + size.y() - 1)};
+                    utils::aabb2i  target_box = {.pos = vec2i(last_x, last_y), .size = vec2i(size.x() - 1, size.y() - 1)};
 
                     if (_isSpotFree(target_box))
                     {

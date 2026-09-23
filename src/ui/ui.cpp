@@ -143,7 +143,7 @@ u32	mbl::ui::getFontSizeX(const std::string &s)
 
 bool	mbl::ui::isOnBox(vec2i spos, vec2i ssize)
 {
-	mbl::utils::aabb2i  box = {.min = spos, .max = spos + ssize};
+	mbl::utils::aabb2i  box = {.pos = spos, .size = ssize};
 
 	return (mbl::utils::aabb2i::contains(box, vec2i(mbl::ui::input_ptr->mouseX(), mbl::ui::input_ptr->mouseY())));
 }

@@ -31,10 +31,22 @@ class   Mesh
         Mesh() {}
         ~Mesh()
         {
-            if (_VAO != 0)
-				glDeleteVertexArrays(1, &_VAO);
+        	clear();
+        }
+        void	clear()
+        {
+	        if (_VAO != 0)
+	        {
+					glDeleteVertexArrays(1, &_VAO);
+	        	_VAO = 0;
+	        }
 			if (_VBO != 0)
+			{
 				glDeleteBuffers(1, &_VBO);
+				_VBO = 0;
+			}
+			_mesh_bytes.clear();
+			_vertex_layouts.clear();
         }
 
         Mesh(const Mesh&) = delete;

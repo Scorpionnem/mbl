@@ -9,3 +9,4 @@
 #include "render/Shader.hpp"
 #include "render/Texture.hpp"
 #include "render/TextureAtlas.hpp"
+#include "render/renderer/AABBRenderer.hpp"

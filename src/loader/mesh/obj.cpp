@@ -230,6 +230,8 @@ void	mbl::loader::mesh::obj::load(const std::string& path, mbl::render::Mesh& me
 			{-1.0f, -1.0f},
 		};
 
+	mesh.clear();
+
 	mesh.set_sizeof_layout(sizeof(mbl::loader::mesh::obj::Vertex));
 	mesh.add_vertex_layout(0, 3, GL_FLOAT, offsetof(mbl::loader::mesh::obj::Vertex, pos));
 	mesh.add_vertex_layout(1, 3, GL_FLOAT, offsetof(mbl::loader::mesh::obj::Vertex, normal));

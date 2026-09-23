@@ -17,19 +17,20 @@ SDL_CFLAGS :=	$(shell sdl2-config --cflags)
 SDL_LIBS :=		$(shell sdl2-config --libs)
 LFLAGS :=		$(SDL_LIBS) -lGL
 
-SRCS :=	src/platform/Window.cpp				\
-		src/platform/Input.cpp				\
-		src/render/Shader.cpp				\
-		src/render/FrameBuffer.cpp			\
-		src/loader/mesh/obj.cpp		\
-		src/loader/texture/stb.cpp	\
-		src/ui/ui.cpp						\
-		src/ui/elements/button.cpp			\
-		src/ui/elements/toggle.cpp			\
-		src/ui/elements/input.cpp			\
-		src/ui/elements/text.cpp			\
-		src/ui/elements/slider.cpp			\
-		src/ui/elements/progress_bar.cpp	\
+SRCS :=	src/platform/Window.cpp					\
+		src/platform/Input.cpp					\
+		src/render/Shader.cpp					\
+		src/render/FrameBuffer.cpp				\
+		src/loader/mesh/obj.cpp					\
+		src/loader/texture/stb.cpp				\
+		src/ui/ui.cpp							\
+		src/ui/elements/button.cpp				\
+		src/ui/elements/toggle.cpp				\
+		src/ui/elements/input.cpp				\
+		src/ui/elements/text.cpp				\
+		src/ui/elements/slider.cpp				\
+		src/ui/elements/progress_bar.cpp		\
+		src/render/renderer/AABBRenderer.cpp	\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

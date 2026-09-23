@@ -34,6 +34,24 @@ T	lerp(T a, T b, I t)
 #include <math/mat.hpp>
 
 template <std::size_t N, typename T>
+vec<N, T>	max(const vec<N, T>& a, const vec<N, T>& b)
+{
+	vec<N, T>	res;
+	for (std::size_t i = 0; i < N; i++)
+		res.data[i] = std::max(a.data[i], b.data[i]);
+	return (res);
+}
+
+template <std::size_t N, typename T>
+vec<N, T>	min(const vec<N, T>& a, const vec<N, T>& b)
+{
+	vec<N, T>	res;
+	for (std::size_t i = 0; i < N; i++)
+		res.data[i] = std::min(a.data[i], b.data[i]);
+	return (res);
+}
+
+template <std::size_t N, typename T>
 vec<N, T>	floor(const vec<N, T>& v)
 {
 	vec<N, T>	res;
