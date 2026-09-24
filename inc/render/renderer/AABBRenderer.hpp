@@ -46,7 +46,7 @@ struct AABBRenderer
 
 	/// Draws `aabb` as a wireframe box
 	template <std::size_t NN, typename TT>
-	static void draw(utils::AABB<NN, TT> aabb, render::Camera& cam, vec3f color = vec3f(1))
+	static void draw(utils::AABB<NN, TT> aabb, const render::Camera& cam, vec3f color = vec3f(1))
 	{
 		render::Mesh*	mesh = _ext_mesh ? _ext_mesh : &_int_mesh;
 		render::Shader*	shader = _ext_shader ? _ext_shader : &_int_shader;

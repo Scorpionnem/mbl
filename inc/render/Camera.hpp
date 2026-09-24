@@ -7,11 +7,11 @@ namespace mbl { namespace render {
 /// First-person style camera (position + yaw/pitch) with view/projection matrix helpers.
 struct   Camera
 {
-    mat4f	getViewMatrix()
+    mat4f	getViewMatrix() const
     {
     	return (mat4f::rotateX(radians(-pitch)) * mat4f::rotateY(radians(yaw)) * mat4f::translate(-pos));
     }
-    mat4f	getProjectionMatrix()
+    mat4f	getProjectionMatrix() const
     {
         return (mat4f::perspective(fov, aspect, near, far));
     }
