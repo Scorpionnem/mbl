@@ -35,7 +35,7 @@ struct RayRenderer
 	}
 
 	template <std::size_t NN, typename TT>
-	static void draw(const ray<NN, TT>& ray, render::Camera& cam, vec3f color = vec3f(1))
+	static void draw(const ray<NN, TT>& ray, const render::Camera& cam, vec3f color = vec3f(1))
 	{
 		render::Mesh*	mesh = _ext_mesh ? _ext_mesh : &_int_mesh;
 		render::Shader*	shader = _ext_shader ? _ext_shader : &_int_shader;
@@ -50,7 +50,7 @@ struct RayRenderer
 	}
 
 	template <std::size_t NN, typename TT>
-	static void draw(const vec<NN, TT>& start, const vec<NN, TT>& end, render::Camera& cam, vec3f color = vec3f(1))
+	static void draw(const vec<NN, TT>& start, const vec<NN, TT>& end, const render::Camera& cam, vec3f color = vec3f(1))
 	{
 		render::Mesh*	mesh = _ext_mesh ? _ext_mesh : &_int_mesh;
 		render::Shader*	shader = _ext_shader ? _ext_shader : &_int_shader;

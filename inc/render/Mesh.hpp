@@ -101,6 +101,7 @@ class   Mesh
 			glBindVertexArray(0);
 			return (_vertices);
 		}
+		u64	vertices() {return (_vertices);}
     private:
     	u32				_VAO = 0;
 		u32				_VBO = 0;
