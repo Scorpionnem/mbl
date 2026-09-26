@@ -45,7 +45,7 @@ class	Server
 		/// Binds and listens on `port`. Returns 0 on success, -1 on error (errno set).
 		int	open(int port, int max_connections = 16)
 		{
-			struct sockaddr_in	addr;
+			struct sockaddr_in	addr = {};
 
 			_fd = socket(AF_INET, SOCK_STREAM, 0);
 			if (_fd == -1)
@@ -65,7 +65,7 @@ class	Server
 			if (listen(_fd, max_connections) == -1)
 				return (-1);
 
-			struct sockaddr_in bound;
+			struct sockaddr_in bound = {};
 			socklen_t len = sizeof(bound);
 			if (getsockname(_fd, (struct sockaddr*)&bound, &len) == -1)
     			return (-1);
@@ -134,7 +134,7 @@ class	Server
 					u8	buf[4096] = {};
 
 					ssize_t	size = ::recv(pfd.fd, buf, sizeof(buf), MSG_DONTWAIT);
-					if (size <= 0)
+					if (size == -1)
 					{
 						if (errno == EAGAIN || errno == EWOULDBLOCK)
 							break ;
@@ -177,7 +177,7 @@ class	Server
 				if (_recv_peek(&hdr, sizeof(hdr), c) == -1)
 				{
 					event = Event::NONE;
-					return (0);
+					continue ;
 				}
 
 				if (hdr.magic != MBL_PCKT_MAGIC)
