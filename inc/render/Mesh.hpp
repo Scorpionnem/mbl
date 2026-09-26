@@ -37,7 +37,7 @@ class   Mesh
         {
 	        if (_VAO != 0)
 	        {
-					glDeleteVertexArrays(1, &_VAO);
+				glDeleteVertexArrays(1, &_VAO);
 	        	_VAO = 0;
 	        }
 			if (_VBO != 0)
@@ -47,6 +47,7 @@ class   Mesh
 			}
 			_mesh_bytes.clear();
 			_vertex_layouts.clear();
+			_mesh_bytes.shrink_to_fit();
         }
 
         Mesh(const Mesh&) = delete;
