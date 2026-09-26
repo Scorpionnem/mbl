@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include "math/math.hpp"
 
-namespace mbl { namespace utils {
+namespace mbl::utils {
 
 /// Monotonic stopwatch, in seconds.
 class	Chrono
@@ -49,4 +49,4 @@ class	Chrono
 	private:
 		double		_start = 0;
 };
-}}
+}

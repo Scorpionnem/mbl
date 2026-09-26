@@ -10,9 +10,12 @@
 #include <poll.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <cstring>
+#include <vector>
 #include <cstdint>
 #include "math/math.hpp"
 #include "net/Packet.hpp"
+#include "utils/Chrono.hpp"
 
 namespace mbl { namespace net {
 
@@ -66,15 +69,39 @@ class	Client
 			}
 		}
 		#define CLIENT_RTT_DELAY (1.0f / 2.0f)
-		void	update()
+		int	update()
 		{
+			if (_disconnect == true)
+				return (0);
+
 			if (_rtt_chrono.get() > CLIENT_RTT_DELAY)
 			{
 				_rtt_chrono.start();
 				mbl::net::Packet::RTTRequest	req = {};
-				req.ts = utils::Chrono::getTimestampMS();
+				req.ts = mbl::utils::Chrono::getTimestampMS();
 				send(&req, sizeof(req));
 			}
+
+			while (1)
+			{
+				u8	buf[4096] = {};
+
+				ssize_t	size = ::recv(_fd, buf, sizeof(buf), MSG_DONTWAIT);
+				if (size == -1)
+				{
+					if (errno == EAGAIN || errno == EWOULDBLOCK)
+						break ;
+					return (-1); // error
+				}
+				else if (size == 0)
+				{
+					_disconnect = true;
+					return (0);
+				}
+
+				_recv_bytes.insert(_recv_bytes.end(), buf, buf + size);
+			}
+			return (0);
 		}
 		/// Non-blocking receive. Sets event to RECV/DISCONNECT/NONE; returns -1 on error.
 		int	recv(void* data, u64 size, Event& event, u64& received_size)
@@ -85,42 +112,47 @@ class	Client
 				return (-1);
 			}
 
-
-			Packet::SizeHeader	hdr = {};
-			ssize_t	recv_size = ::recv(_fd, &hdr, sizeof(hdr), MSG_DONTWAIT);
-			if (recv_size == -1)
-			{
-				if (errno == EAGAIN || errno == EWOULDBLOCK)
-				{
-					event = Event::NONE;
-					return (0);
-				}
-				return (-1);
-			}
-
-			if (hdr.magic != MBL_PCKT_MAGIC)
-				return (-1);
-
-			if (size < hdr.size)
-				return (-1);
-
-			recv_size = ::recv(_fd, data, std::min(size, hdr.size), MSG_WAITALL);
-			if (recv_size == -1)
-				return (-1);
-
-			if (recv_size == 0)
+			if (_disconnect)
 			{
 				disconnect();
 				event = Event::DISCONNECT;
 				return (0);
 			}
 
+			Packet::SizeHeader	hdr = {};
+			if (_recv_peek(&hdr, sizeof(hdr)) == -1)
+			{
+				event = Event::NONE;
+				return (0);
+			}
+
+			if (hdr.magic != MBL_PCKT_MAGIC)
+			{
+				std::cerr << "Invalid packet magic" << std::endl;
+				return (-1);
+			}
+			if (size < hdr.size)
+			{
+				std::cerr << "Buffer size too small" << std::endl;
+				return (-1);
+			}
+
+			if (_recv_peek(data, hdr.size, sizeof(hdr)) == -1)
+			{
+				event = Event::NONE;
+				return (0);
+			}
+
+			_recv(&hdr, sizeof(hdr));
+			if (_recv(data, hdr.size) == -1)
+				return (-1);
+
 			if (_private_packet(data, size))
 			{
 				event = Event::NONE;
 				return (0);
 			}
-			received_size = recv_size;
+			received_size = hdr.size;
 			event = Event::RECV;
 			return (0);
 		}
@@ -137,6 +169,30 @@ class	Client
 		std::string	addr() {return (_addr);}
 		int	port() {return (_port);}
 	private:
+		int _recv_peek(void* data, u64 size, u64 offset = 0)
+		{
+		    u8* buf = reinterpret_cast<u8*>(data);
+		    if (_recv_bytes.size() - _read_off < size + offset)
+		        return (-1);
+		    std::memcpy(buf, _recv_bytes.data() + _read_off + offset, size);
+		    return (0);
+		}
+
+		int _recv(void* data, u64 size)
+		{
+		    u8* buf = reinterpret_cast<u8*>(data);
+		    if (_recv_bytes.size() - _read_off < size)
+		        return (-1);
+		    std::memcpy(buf, _recv_bytes.data() + _read_off, size);
+		    _read_off += size;
+
+		    if (_read_off > 65536 || _read_off == _recv_bytes.size())
+		    {
+		        _recv_bytes.erase(_recv_bytes.begin(), _recv_bytes.begin() + _read_off);
+		        _read_off = 0;
+		    }
+		    return (0);
+		}
 		int	_private_packet(void* data, u64 size)
 		{
 			if (size < sizeof(net::Packet::Header))
@@ -175,8 +231,11 @@ class	Client
 
 		utils::Chrono	_rtt_chrono;
 		u64	_rtt = 0;
+		std::vector<u8>	_recv_bytes;
+		u64             _read_off = 0;
 
 		int	_fd = -1;
+		bool	_disconnect = false;
 };
 }}
 /*
