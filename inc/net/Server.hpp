@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstring>
 #include <vector>
 #include <algorithm>
 #include <map>
@@ -18,7 +19,7 @@
 #include "math/math.hpp"
 #include "net/Packet.hpp"
 
-namespace mbl { namespace net {
+namespace mbl::net {
 
 /// Non-blocking, poll()-based TCP server accepting multiple clients.
 /// Call update() then recv() in a loop each frame/tick; recv() walks pending
@@ -29,6 +30,8 @@ class	Server
 		struct Client
 		{
 			int				fd = -1;
+			std::vector<u8>	recv_bytes;
+			u64				read_off = 0;
 		};
 		enum Event
 		{
@@ -96,11 +99,6 @@ class	Server
 				return (-1);
 
 			_poll_index = 0;
-			return (0);
-		}
-		/// Pops the next pending event (RECV/DISCONNECT/CONNECTION/NONE) from the last update().
-		int	recv(void* data, u64 size, Event& event, u64& received_size, int& fd)
-		{
 			while (_poll_index < _pollfds.size())
 			{
 				struct pollfd&	pfd = _pollfds[_poll_index++];
@@ -121,45 +119,96 @@ class	Server
 					setsockopt(client_fd, IPPROTO_TCP, TCP_NODELAY, &nodelay, sizeof(nodelay));
 
 					_clients.push_back({.fd = client_fd});
-					fd = client_fd;
-					event = Event::CONNECTION;
-					return (0);
+					_connects.push_back(client_fd);
+					continue ;
 				}
 
-				Packet::SizeHeader	hdr = {};
-				ssize_t	recv_size = ::recv(pfd.fd, &hdr, sizeof(hdr), MSG_DONTWAIT);
-				if (recv_size <= 0)
-				{
-					if (recv_size == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
-						continue ;
-
-					fd = pfd.fd;
-					disconnect(pfd.fd);
-					event = Event::DISCONNECT;
-					return (0);
-				}
-				if (hdr.magic != MBL_PCKT_MAGIC)
+				auto f = std::find_if(_clients.begin(), _clients.end(), [&pfd](const Client& c){return (c.fd == pfd.fd);});
+				if (f == _clients.end())
 					continue ;
 
-				if (size < hdr.size)
-					throw std::runtime_error("recv: buffer too small\n");
-				recv_size = ::recv(pfd.fd, data, std::min(size, hdr.size), MSG_WAITALL);
-				if (recv_size <= 0)
-				{
-					fd = pfd.fd;
-					disconnect(pfd.fd);
-					event = Event::DISCONNECT;
-					return (0);
-				}
+				Client& client = *f;
 
-				if (_private_packet(pfd.fd, data, recv_size))
+				while (1)
+				{
+					u8	buf[4096] = {};
+
+					ssize_t	size = ::recv(pfd.fd, buf, sizeof(buf), MSG_DONTWAIT);
+					if (size <= 0)
+					{
+						if (errno == EAGAIN || errno == EWOULDBLOCK)
+							break ;
+						else if (size == -1)
+						{
+							perror("recv");
+							break ;
+						}
+					}
+					else if (size == 0)
+					{
+						_disconnects.push_back(pfd.fd);
+						disconnect(pfd.fd);
+						break ;
+					}
+
+					client.recv_bytes.insert(client.recv_bytes.end(), buf, buf + size);
+				}
+			}
+			return (0);
+		}
+		/// Pops the next pending event (RECV/DISCONNECT/CONNECTION/NONE) from the last update().
+		int	recv(void* data, u64 size, Event& event, u64& received_size, int& fd)
+		{
+			if (_disconnects.size())
+			{
+				fd = _disconnects.back();
+				_disconnects.pop_back();
+				return (Event::DISCONNECT);
+			}
+			else if (_connects.size())
+			{
+				fd = _connects.back();
+				_connects.pop_back();
+				return (Event::CONNECTION);
+			}
+			for (auto& c : _clients)
+			{
+				Packet::SizeHeader	hdr = {};
+				if (_recv_peek(&hdr, sizeof(hdr), c) == -1)
 				{
 					event = Event::NONE;
 					return (0);
 				}
 
-				fd = pfd.fd;
-				received_size = recv_size;
+				if (hdr.magic != MBL_PCKT_MAGIC)
+				{
+					std::cerr << "Server: Invalid packet magic" << std::endl;
+					return (-1);
+				}
+				if (size < hdr.size)
+				{
+					std::cerr << "Server: Buffer size too small" << std::endl;
+					return (-1);
+				}
+
+				if (_recv_peek(data, hdr.size, c, sizeof(hdr)) == -1)
+				{
+					event = Event::NONE;
+					return (0);
+				}
+
+				_recv(&hdr, sizeof(hdr), c);
+				if (_recv(data, hdr.size, c) == -1)
+					return (-1);
+
+				if (_private_packet(c.fd, data, hdr.size))
+				{
+					event = Event::NONE;
+					return (0);
+				}
+
+				fd = c.fd;
+				received_size = hdr.size;
 				event = Event::RECV;
 				return (0);
 			}
@@ -243,6 +292,30 @@ class	Server
 			}
 			return (1);
 		}
+		int _recv_peek(void* data, u64 size, Client& client, u64 offset = 0)
+		{
+		    u8* buf = reinterpret_cast<u8*>(data);
+		    if (client.recv_bytes.size() - client.read_off < size + offset)
+		        return (-1);
+		    std::memcpy(buf, client.recv_bytes.data() + client.read_off + offset, size);
+		    return (0);
+		}
+
+		int _recv(void* data, u64 size, Client& client)
+		{
+		    u8* buf = reinterpret_cast<u8*>(data);
+		    if (client.recv_bytes.size() - client.read_off < size)
+		        return (-1);
+		    std::memcpy(buf, client.recv_bytes.data() + client.read_off, size);
+		    client.read_off += size;
+
+		    if (client.read_off > 65536 || client.read_off == client.recv_bytes.size())
+		    {
+		        client.recv_bytes.erase(client.recv_bytes.begin(), client.recv_bytes.begin() + client.read_off);
+		        client.read_off = 0;
+		    }
+		    return (0);
+		}
 
 		int					_port = 0;
 		std::string			_addr;
@@ -250,10 +323,13 @@ class	Server
 		int					_fd = -1;
 		std::vector<Server::Client>		_clients;
 
+		std::vector<int>				_disconnects;
+		std::vector<int>				_connects;
+
 		std::vector<struct pollfd>	_pollfds;
 		size_t						_poll_index = 0;
 };
-}}
+}
 
 /*
 	void	server(int port)
