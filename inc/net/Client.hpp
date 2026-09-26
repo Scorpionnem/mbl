@@ -59,12 +59,16 @@ class	Client
 			_addr = address;
 			_port = ntohs(serv_addr.sin_port);
 			_disconnect = false;
+			_recv_bytes.clear();
+			_read_off = 0;
 			return (0);
 		}
 		void	disconnect()
 		{
 			if (_fd != -1)
 			{
+				_recv_bytes.clear();
+				_read_off = 0;
 				close(_fd);
 				_fd = -1;
 			}
