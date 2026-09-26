@@ -58,6 +58,7 @@ class	Client
 
 			_addr = address;
 			_port = ntohs(serv_addr.sin_port);
+			_disconnect = false;
 			return (0);
 		}
 		void	disconnect()
