@@ -20,7 +20,7 @@ struct vec
     template <std::size_t NN, typename TT>
     vec(const vec<NN, TT>& cpy)
     {
-    	for (std::size_t i = 0; i < N; i++) data[i] = cpy.data[i];
+    	for (std::size_t i = 0; i < std::min(N, NN); i++) data[i] = cpy.data[i];
     }
     ~vec() = default;
 

@@ -10,29 +10,7 @@ namespace mbl::render::renderer
 struct RayRenderer
 {
     static void	gen_render_data(const char* vert_path = "assets/shaders/ray.vert", const char* frag_path = "assets/shaders/ray.frag",
-    							render::Mesh* ext_mesh = nullptr, render::Shader* ext_shader = nullptr)
-	{
-		if (ext_mesh)
-			_ext_mesh = ext_mesh;
-		if (ext_shader)
-			_ext_shader = ext_shader;
-
-		render::Mesh*	mesh = _ext_mesh ? _ext_mesh : &_int_mesh;
-		render::Shader*	shader = _ext_shader ? _ext_shader : &_int_shader;
-
-		shader->load(vert_path, frag_path);
-
-		mesh->set_sizeof_layout(sizeof(vec3f));
-		mesh->add_vertex_layout(0, 3, GL_FLOAT, 0);
-
-		vec3f vertices[] = {
-			{0,0,0}, {1,0,0},
-			{0,0,0}, {0,1,0},
-		};
-
-		mesh->add_vertex_data(reinterpret_cast<u8*>(vertices), sizeof(vertices));
-		mesh->upload();
-	}
+    							render::Mesh* ext_mesh = nullptr, render::Shader* ext_shader = nullptr);
 
 	template <std::size_t NN, typename TT>
 	static void draw(const ray<NN, TT>& ray, const render::Camera& cam, vec3f color = vec3f(1))

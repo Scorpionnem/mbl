@@ -175,10 +175,7 @@ class	Server
 			{
 				Packet::SizeHeader	hdr = {};
 				if (_recv_peek(&hdr, sizeof(hdr), c) == -1)
-				{
-					event = Event::NONE;
 					continue ;
-				}
 
 				if (hdr.magic != MBL_PCKT_MAGIC)
 				{

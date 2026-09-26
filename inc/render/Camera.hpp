@@ -33,10 +33,10 @@ struct   Camera
     vec3f   pos;
     float  yaw = 0;
     float  pitch = 0;
-    float  fov = 0;
-    float  aspect = 0;
-    float  near = 0;
-    float  far = 0;
+    float  fov = 70;
+    float  aspect = 1;
+    float  near = 0.01;
+    float  far = 1000;
 };
 
 }}

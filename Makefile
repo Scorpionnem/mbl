@@ -3,7 +3,7 @@ NAME :=	libmbl.a
 AR := ar
 RCS := rcs
 CXX := c++
-CXXFLAGS :=	-g -MP -MMD -std=c++20 # -Wall -Wextra -Werror
+CXXFLAGS :=	-g -MP -MMD -std=c++20 -Wall -Wextra -Werror -O3
 
 LIB_DIR :=	lib/
 INC_DIR :=	inc/
@@ -21,6 +21,7 @@ SRCS :=	src/platform/Window.cpp					\
 		src/platform/Input.cpp					\
 		src/render/Shader.cpp					\
 		src/render/FrameBuffer.cpp				\
+		src/render/Font.cpp						\
 		src/loader/mesh/obj.cpp					\
 		src/loader/texture/stb.cpp				\
 		src/ui/ui.cpp							\
@@ -31,7 +32,7 @@ SRCS :=	src/platform/Window.cpp					\
 		src/ui/elements/slider.cpp				\
 		src/ui/elements/progress_bar.cpp		\
 		src/render/renderer/AABBRenderer.cpp	\
-		src/render/renderer/RayRenderer.cpp	\
+		src/render/renderer/RayRenderer.cpp		\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

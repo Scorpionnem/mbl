@@ -39,7 +39,6 @@ class Window
 		u32     height() const;
 
 	private:
-        double  delta = 0;
 		void    _initSDL();
 		void    _createWindow(const char* title, u32 width, u32 height);
         void    _setGLAttributes();

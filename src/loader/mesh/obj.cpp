@@ -220,16 +220,6 @@ void	mbl::loader::mesh::obj::load(const std::string& path, mbl::render::Mesh& me
 	if (!file.is_open())
 		throw std::runtime_error("Failed to open model " + path);
 
-	vec2f verts[] = {
-			{-1.0f, -1.0f},
-			{ 1.0f, -1.0f},
-			{ 1.0f,  1.0f},
-
-			{ 1.0f,  1.0f},
-			{-1.0f,  1.0f},
-			{-1.0f, -1.0f},
-		};
-
 	mesh.clear();
 
 	mesh.set_sizeof_layout(sizeof(mbl::loader::mesh::obj::Vertex));

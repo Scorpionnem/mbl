@@ -10,39 +10,7 @@ struct AABBRenderer
 {
 	/// Builds a wireframe (GL_LINES) unit-cube mesh for drawing a 3D box; N == 3 only.
     static void	gen_render_data(const char* vert_path = "assets/shaders/aabb.vert", const char* frag_path = "assets/shaders/aabb.frag",
-    							render::Mesh* ext_mesh = nullptr, render::Shader* ext_shader = nullptr)
-	{
-		if (ext_mesh)
-			_ext_mesh = ext_mesh;
-		if (ext_shader)
-			_ext_shader = ext_shader;
-
-		render::Mesh*	mesh = _ext_mesh ? _ext_mesh : &_int_mesh;
-		render::Shader*	shader = _ext_shader ? _ext_shader : &_int_shader;
-
-		shader->load(vert_path, frag_path);
-
-		mesh->set_sizeof_layout(sizeof(vec3f));
-		mesh->add_vertex_layout(0, 3, GL_FLOAT, 0);
-
-		vec3f vertices[] = {
-			{0,0,0}, {1,0,0},
-			{0,0,0}, {0,1,0},
-			{0,0,0}, {0,0,1},
-			{0,1,0}, {1,1,0},
-			{0,1,0}, {0,1,1},
-			{1,1,1}, {0,1,1},
-			{1,1,1}, {1,0,1},
-			{1,1,1}, {1,1,0},
-			{0,1,1}, {0,0,1},
-			{0,0,1}, {1,0,1},
-			{1,0,1}, {1,0,0},
-			{1,1,0}, {1,0,0},
-		};
-
-		mesh->add_vertex_data(reinterpret_cast<u8*>(vertices), sizeof(vertices));
-		mesh->upload();
-	}
+    							render::Mesh* ext_mesh = nullptr, render::Shader* ext_shader = nullptr);
 
 	/// Draws `aabb` as a wireframe box
 	template <std::size_t NN, typename TT>
