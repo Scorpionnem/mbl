@@ -73,6 +73,26 @@ vec<N, T>	abs(const vec<N, T>& v)
 }
 
 template <std::size_t N, typename T>
+vec<N, T>	sin(const vec<N, T>& v)
+{
+	vec<N, T>	res;
+
+	for (std::size_t i = 0; i < N; i++)
+		res.data[i] = std::sin(v.data[i]);
+	return (res);
+}
+
+template <std::size_t N, typename T>
+vec<N, T>	cos(const vec<N, T>& v)
+{
+	vec<N, T>	res;
+
+	for (std::size_t i = 0; i < N; i++)
+		res.data[i] = std::cos(v.data[i]);
+	return (res);
+}
+
+template <std::size_t N, typename T>
 vec<N, T>	sign(const vec<N, T>& v)
 {
 	vec<N, T>	res;
