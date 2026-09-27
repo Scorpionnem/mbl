@@ -29,6 +29,10 @@ class	Server
 	public:
 		struct Client
 		{
+			Client(int fd)
+			{
+				this->fd = fd;
+			}
 			int				fd = -1;
 			std::vector<u8>	recv_bytes;
 			u64				read_off = 0;
@@ -118,7 +122,7 @@ class	Server
 					int	nodelay = 1;
 					setsockopt(client_fd, IPPROTO_TCP, TCP_NODELAY, &nodelay, sizeof(nodelay));
 
-					_clients.push_back({.fd = client_fd});
+					_clients.push_back(Client(client_fd));
 					_connects.push_back(client_fd);
 					continue ;
 				}
