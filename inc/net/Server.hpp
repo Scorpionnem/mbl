@@ -220,7 +220,8 @@ class	Server
 		/// Non-blocking send to one client.
 		int	send(int fd, const void* data, u64 size)
 		{
-			Packet::SizeHeader	hdr = {.size = size};
+			Packet::SizeHeader	hdr = {};
+			hdr.size = size;
 			if (::send(fd, &hdr, sizeof(hdr), MSG_WAITALL | MSG_NOSIGNAL) == -1)
 				return (-1);
 

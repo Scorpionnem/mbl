@@ -215,7 +215,7 @@ struct	mat
 	{
 		return (data[row + col * N]);
 	}
-};
+} __attribute__((packed));
 
 template <std::size_t N, typename T>
 std::ostream&   operator<<(std::ostream& s, const mat<N, T>& v)

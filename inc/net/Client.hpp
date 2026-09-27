@@ -164,7 +164,8 @@ class	Client
 		/// Blocking send (waits until all `size` bytes are sent).
 		int	send(const void* data, u64 size)
 		{
-			Packet::SizeHeader	hdr = {.size = size};
+			Packet::SizeHeader	hdr = {};
+			hdr.size = size;
 			if (::send(_fd, &hdr, sizeof(hdr), MSG_WAITALL | MSG_NOSIGNAL) == -1)
 				return (-1);
 
