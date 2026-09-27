@@ -47,7 +47,7 @@ class   Mesh
 			}
 			_mesh_bytes.clear();
 			_vertex_layouts.clear();
-			_mesh_bytes.shrink_to_fit();
+			_mesh_bytes = {};
         }
 
         Mesh(const Mesh&) = delete;
