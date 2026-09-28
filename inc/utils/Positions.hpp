@@ -7,24 +7,24 @@ namespace mbl { namespace utils {
 /// One of the 6 axis-aligned directions.
 enum class Facing
 {
-	POS_X,
-	NEG_X,
 	POS_Y,
 	NEG_Y,
-	POS_Z,
 	NEG_Z,
+	POS_Z,
+	POS_X,
+	NEG_X,
 	INVALID,
 };
 
 /// Facing, named as compass/vertical directions (NORTH = -Z, UP = +Y, ...).
 enum class FacingCardinal
 {
+	UP = static_cast<int>(Facing::POS_Y),
+	DOWN = static_cast<int>(Facing::NEG_Y),
 	NORTH = static_cast<int>(Facing::NEG_Z),
 	SOUTH = static_cast<int>(Facing::POS_Z),
 	EAST = static_cast<int>(Facing::POS_X),
 	WEST = static_cast<int>(Facing::NEG_X),
-	UP = static_cast<int>(Facing::POS_Y),
-	DOWN = static_cast<int>(Facing::NEG_Y),
 	INVALID = static_cast<int>(Facing::INVALID),
 };
 
