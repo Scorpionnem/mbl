@@ -126,7 +126,7 @@ struct vec
     T   g() const requires (N >= 2) {return (data[1]);}
     T   b() const requires (N >= 3) {return (data[2]);}
     T   a() const requires (N >= 4) {return (data[3]);}
-} __attribute__((packed));
+};
 
 template <std::size_t N, typename T>
 std::ostream&   operator<<(std::ostream& s, const vec<N, T>& v)
