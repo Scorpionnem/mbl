@@ -129,6 +129,24 @@ struct vec
 };
 
 template <std::size_t N, typename T>
+struct std::hash<vec<N, T>>
+{
+	std::size_t operator()(const vec<N, T>& v) const noexcept
+	{
+		std::size_t h = 42;
+
+		for (std::size_t i = 1; i < N; ++i)
+		{
+			h ^= h * 35527;
+			h ^= std::hash<T>{}(v.data[i]) * 34319;
+			h ^= (h >> 13) * 27919;
+			h ^= (h >> 16);
+		}
+		return h;
+	}
+};
+
+template <std::size_t N, typename T>
 std::ostream&   operator<<(std::ostream& s, const vec<N, T>& v)
 {
     s << "[";

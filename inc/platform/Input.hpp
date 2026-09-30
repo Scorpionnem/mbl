@@ -13,7 +13,7 @@ class Input
 	public:
 		Input();
 
-		/// True while the key/button (SDL scancode or button constant) is held down.
+		/// True while the key/button (SDL keycode or button constant) is held down.
 		bool	isDown(int action) const;
 		/// True only on the frame the key/button was first pressed.
 		bool	wasPressed(int action) const;
