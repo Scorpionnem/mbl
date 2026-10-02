@@ -28,7 +28,9 @@ class ui
 		#define	ANCHOR_BOTTOM_LEFT vec2f(0, 1)
 		#define	ANCHOR_TOP_RIGHT vec2f(1, 0)
 		#define	ANCHOR_BOTTOM_RIGHT vec2f(1, 1)
+		#define	ANCHOR_TOP_CENTER vec2f(0.5f, 0.0f)
 		#define	ANCHOR_CENTER vec2f(0.5, 0.5)
+		#define	ANCHOR_BOTTOM_CENTER vec2f(0.5f, 1.0f)
 
         /// Loads the bitmap font used to render all text.
         static void    init(const std::string& font_path);
