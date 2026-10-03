@@ -107,25 +107,25 @@ struct vec
 	}
 	constexpr vec<N, T>	reflect(const vec<N, T>& n) const {return (vec<N, T>::reflect(*this, n));}
 
-    T&  x() requires (N >= 1) {return (data[0]);}
-    T&  y() requires (N >= 2) {return (data[1]);}
-    T&  z() requires (N >= 3) {return (data[2]);}
-    T&  w() requires (N >= 4) {return (data[3]);}
+    constexpr T&  x() requires (N >= 1) {return (data[0]);}
+    constexpr T&  y() requires (N >= 2) {return (data[1]);}
+    constexpr T&  z() requires (N >= 3) {return (data[2]);}
+    constexpr T&  w() requires (N >= 4) {return (data[3]);}
 
-    T&  r() requires (N >= 1) {return (data[0]);}
-    T&  g() requires (N >= 2) {return (data[1]);}
-    T&  b() requires (N >= 3) {return (data[2]);}
-    T&  a() requires (N >= 4) {return (data[3]);}
+    constexpr T&  r() requires (N >= 1) {return (data[0]);}
+    constexpr T&  g() requires (N >= 2) {return (data[1]);}
+    constexpr T&  b() requires (N >= 3) {return (data[2]);}
+    constexpr T&  a() requires (N >= 4) {return (data[3]);}
 
-    T   x() const requires (N >= 1) {return (data[0]);}
-    T   y() const requires (N >= 2) {return (data[1]);}
-    T   z() const requires (N >= 3) {return (data[2]);}
-    T   w() const requires (N >= 4) {return (data[3]);}
+    constexpr T   x() const requires (N >= 1) {return (data[0]);}
+    constexpr T   y() const requires (N >= 2) {return (data[1]);}
+    constexpr T   z() const requires (N >= 3) {return (data[2]);}
+    constexpr T   w() const requires (N >= 4) {return (data[3]);}
 
-    T   r() const requires (N >= 1) {return (data[0]);}
-    T   g() const requires (N >= 2) {return (data[1]);}
-    T   b() const requires (N >= 3) {return (data[2]);}
-    T   a() const requires (N >= 4) {return (data[3]);}
+    constexpr T   r() const requires (N >= 1) {return (data[0]);}
+    constexpr T   g() const requires (N >= 2) {return (data[1]);}
+    constexpr T   b() const requires (N >= 3) {return (data[2]);}
+    constexpr T   a() const requires (N >= 4) {return (data[3]);}
 };
 
 template <std::size_t N, typename T>

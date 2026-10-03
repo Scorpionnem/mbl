@@ -225,6 +225,7 @@ class	Client
 
 					req.ts = request_pckt->ts;
 					send(&req, sizeof(req));
+					break ;
 				}
 				default:
 					return (0);

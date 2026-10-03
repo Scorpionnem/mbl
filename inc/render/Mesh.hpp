@@ -54,7 +54,7 @@ class   Mesh
         Mesh& operator=(const Mesh&) = delete;
 
 		/// Appends raw vertex bytes; set_sizeof_layout() must be called first (used to count vertices).
-		void	add_vertex_data(u8 *bytes, u64 size)
+		void	add_vertex_data(const u8 *bytes, u64 size)
 		{
             _vertices += size / _sizeof_layout;
 			_mesh_bytes.insert(_mesh_bytes.end(), bytes, bytes + size);
