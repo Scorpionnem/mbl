@@ -93,6 +93,8 @@ class ui
 
         static render::Texture	button_texture;
         static render::Texture	button_highlighted_texture;
+        static render::Texture	slider_texture;
+        static render::Texture	slider_highlighted_texture;
         static render::Texture	text_field_highlighted_texture;
         static render::Texture	text_field_texture;
         static render::Texture	progress_texture;

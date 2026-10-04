@@ -11,6 +11,9 @@ mbl::render::Shader	mbl::ui::rect_shader;
 mbl::render::Shader	mbl::ui::text_shader;
 mbl::render::Font	mbl::ui::font;
 
+mbl::render::Texture	mbl::ui::slider_texture;
+mbl::render::Texture	mbl::ui::slider_highlighted_texture;
+
 mbl::render::Texture	mbl::ui::button_texture;
 mbl::render::Texture	mbl::ui::button_highlighted_texture;
 
@@ -54,6 +57,11 @@ void    mbl::ui::init(const std::string& font_path)
     ui::button_highlighted_texture.upload();
     mbl::loader::texture::stb::load("assets/textures/ui/button.png", ui::button_texture);
     ui::button_texture.upload();
+
+    mbl::loader::texture::stb::load("assets/textures/ui/slider_highlighted.png", ui::slider_highlighted_texture);
+    ui::slider_highlighted_texture.upload();
+    mbl::loader::texture::stb::load("assets/textures/ui/slider.png", ui::slider_texture);
+    ui::slider_texture.upload();
 
     mbl::loader::texture::stb::load("assets/textures/ui/text_field_highlighted.png", ui::text_field_highlighted_texture);
     ui::text_field_highlighted_texture.upload();
