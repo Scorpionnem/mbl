@@ -105,6 +105,8 @@ class ui
 
         static render::Font	font;
 
+        static bool	clicked_frame;
+
         static std::vector<DrawInfo>  draws;
         static std::vector<TextDrawInfo>  text_draws;
         static std::string	focused_text_input;

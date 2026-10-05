@@ -11,6 +11,8 @@ mbl::render::Shader	mbl::ui::rect_shader;
 mbl::render::Shader	mbl::ui::text_shader;
 mbl::render::Font	mbl::ui::font;
 
+bool	mbl::ui::clicked_frame = false;
+
 mbl::render::Texture	mbl::ui::slider_texture;
 mbl::render::Texture	mbl::ui::slider_highlighted_texture;
 
@@ -78,6 +80,7 @@ void    mbl::ui::init(const std::string& font_path)
 
 void    mbl::ui::beginFrame(const mbl::platform::Input& input)
 {
+	clicked_frame = false;
     mbl::ui::input_ptr = &input;
 }
 

@@ -30,6 +30,11 @@ class Window
 		const platform::Input&    pollEvents();
 
 		void    swapBuffers();
+		void	setFullscreen(bool state)
+		{
+			SDL_SetWindowFullscreen(_window, state ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+			_fullscreen = state;
+		}
 
 		void    captureMouse(bool captured);
 		bool    isMouseCaptured() const;
@@ -38,6 +43,7 @@ class Window
 		u32     width() const;
 		u32     height() const;
 
+		bool	fullscreen() {return (_fullscreen);}
 	private:
 		void    _initSDL();
 		void    _createWindow(const char* title, u32 width, u32 height);
@@ -53,6 +59,8 @@ class Window
 
 		u32         _width = 0;
 		u32         _height = 0;
+
+		bool		_fullscreen = false;
 
         double  lastFrameTime = 0;
 };

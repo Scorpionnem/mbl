@@ -39,8 +39,11 @@ bool    mbl::ui::input(const std::string& label, std::string& input, vec2f pos, 
     if (!text_input.empty() && focused)
     	input += text_input;
 
-    if (mbl::ui::input_ptr->wasPressed(SDLK_BACKSPACE) && focused && !input.empty())
+    if (mbl::ui::input_ptr->wasPressed(SDLK_BACKSPACE) && focused && !input.empty() && !clicked_frame)
+    {
+    	clicked_frame = true;
     	input = input.substr(0, input.size() - 1);
+    }
 
     return (false);
 }

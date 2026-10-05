@@ -12,8 +12,9 @@ bool	mbl::ui::toggle(const std::string& label, bool& state, vec2f pos, vec2f siz
    	vec2f	text_pos = spos + ssize / 2 - vec2f(mbl::ui::font.get_width(label), mbl::ui::font.get_char_size()) * ui::scale / 2;
 	mbl::ui::raw_text(label, text_pos, ui::scale);
 
-    if (mbl::ui::input_ptr->wasPressed(SDL_BUTTON_LEFT) && hovered)
+    if (mbl::ui::input_ptr->wasPressed(SDL_BUTTON_LEFT) && hovered && !clicked_frame)
     {
+    	clicked_frame = true;
     	state = !state;
      	return (true);
     }
