@@ -30,6 +30,7 @@ SRCS :=	src/platform/Window.cpp					\
 		src/ui/elements/input.cpp				\
 		src/ui/elements/text.cpp				\
 		src/ui/elements/slider.cpp				\
+		src/ui/elements/sprite.cpp				\
 		src/ui/elements/progress_bar.cpp		\
 		src/render/renderer/AABBRenderer.cpp	\
 		src/render/renderer/RayRenderer.cpp		\

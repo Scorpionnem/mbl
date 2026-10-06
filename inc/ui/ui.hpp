@@ -58,6 +58,7 @@ class ui
         static bool	input(const std::string& label, std::string& input, vec2f pos, vec2f size, Anchor anchor = vec2f(0.5));
         /// Draggable slider over [min, max]; returns true while being dragged.
         static bool	slider(const std::string& label, int& input, int min, int max, vec2f pos, vec2f size, Anchor anchor = vec2f(0.5));
+        static void	sprite(mbl::render::Texture* tex, vec2f pos, vec2f size, Anchor anchor = vec2f(0.5));
 
     private:
     	static void	raw_text(const std::string& str, vec2f pos, float scale, vec3f color = vec3f(1), bool background = false, vec3f background_color = vec3f(1));
@@ -69,6 +70,12 @@ class ui
         static bool	isOnBox(vec2i spos, vec2i ssize);
     private:
         struct  DrawInfo
+        {
+            vec2i   pos;
+            vec2i   size;
+            render::Texture	*texture;
+        };
+        struct  SpriteInfo
         {
             vec2i   pos;
             vec2i   size;
@@ -102,12 +109,14 @@ class ui
         static render::Mesh    rect_mesh;
         static render::Shader  rect_shader;
         static render::Shader	text_shader;
+        static render::Shader	sprite_shader;
 
         static render::Font	font;
 
         static bool	clicked_frame;
 
         static std::vector<DrawInfo>  draws;
+        static std::vector<SpriteInfo>  sprite_draws;
         static std::vector<TextDrawInfo>  text_draws;
         static std::string	focused_text_input;
         static std::string	dragging_slider;

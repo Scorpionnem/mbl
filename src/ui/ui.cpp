@@ -9,6 +9,7 @@ float    mbl::ui::offset_y;
 mbl::render::Mesh	mbl::ui::rect_mesh;
 mbl::render::Shader	mbl::ui::rect_shader;
 mbl::render::Shader	mbl::ui::text_shader;
+mbl::render::Shader	mbl::ui::sprite_shader;
 mbl::render::Font	mbl::ui::font;
 
 bool	mbl::ui::clicked_frame = false;
@@ -27,6 +28,7 @@ mbl::render::Texture	mbl::ui::progress_background_texture;
 
 std::vector<mbl::ui::DrawInfo>		mbl::ui::draws;
 std::vector<mbl::ui::TextDrawInfo>	mbl::ui::text_draws;
+std::vector<mbl::ui::SpriteInfo>  mbl::ui::sprite_draws;
 
 std::string	mbl::ui::focused_text_input;
 std::string	mbl::ui::dragging_slider;
@@ -42,12 +44,12 @@ void    mbl::ui::init(const std::string& font_path)
 
     vec2f rect_verts[] =
 	{
-		{0.0f, 0.0f},
-		{1.0f, 1.0f},
-		{0.0f, 1.0f},
-		{0.0f, 0.0f},
-		{1.0f, 0.0f},
-		{1.0f, 1.0f}
+		{0.0f, 0.0f}, {0.0f, 0.0f},
+		{1.0f, 1.0f}, {1.0f, 1.0f},
+		{0.0f, 1.0f}, {0.0f, 1.0f},
+		{0.0f, 0.0f}, {0.0f, 0.0f},
+		{1.0f, 0.0f}, {1.0f, 0.0f},
+		{1.0f, 1.0f}, {1.0f, 1.0f}
 	};
 
     mbl::loader::texture::stb::load("assets/textures/ui/progress.png", ui::progress_background_texture);
@@ -70,11 +72,13 @@ void    mbl::ui::init(const std::string& font_path)
     mbl::loader::texture::stb::load("assets/textures/ui/text_field.png", ui::text_field_texture);
     ui::text_field_texture.upload();
 
-	mbl::ui::rect_mesh.set_sizeof_layout(sizeof(vec2f));
+	mbl::ui::rect_mesh.set_sizeof_layout(2 * sizeof(vec2f));
 	mbl::ui::rect_mesh.add_vertex_layout(0, 2, GL_FLOAT, 0);
+	mbl::ui::rect_mesh.add_vertex_layout(1, 2, GL_FLOAT, sizeof(vec2f));
 	mbl::ui::rect_mesh.add_vertex_data(reinterpret_cast<u8*>(rect_verts), sizeof(rect_verts));
 	mbl::ui::rect_mesh.upload();
 	mbl::ui::rect_shader.load("assets/shaders/ui/rect.vert", "assets/shaders/ui/rect.frag");
+	mbl::ui::sprite_shader.load("assets/shaders/ui/sprite.vert", "assets/shaders/ui/sprite.frag");
 	mbl::ui::text_shader.load("assets/shaders/ui/text.vert", "assets/shaders/ui/text.frag");
 }
 
@@ -112,6 +116,22 @@ void    mbl::ui::render()
 
         mbl::ui::rect_mesh.draw(GL_TRIANGLES);
     }
+    for (mbl::ui::SpriteInfo& d : mbl::ui::sprite_draws)
+    {
+	    const vec2i &pos = d.pos;
+	    const vec2i &size = d.size;
+
+	    rect_shader.bind();
+	    mat4f model = mat4f::translate(vec3f(pos.x(), pos.y(), 0.0f)) * mat4f::scale(vec3f(size.x(), size.y(), 1.0f));
+	    rect_shader.setMat4("uModel", model);
+	    rect_shader.setMat4("uProj", mat4f::ortho(0.0f, mbl::ui::input_ptr->width(), mbl::ui::input_ptr->height(), 0.0f, -1.0f, 1.0f));
+	    rect_shader.setInt("uTex", 0);
+
+		if (d.texture)
+			d.texture->bind(0);
+
+	    mbl::ui::rect_mesh.draw(GL_TRIANGLES);
+    }
     for (mbl::ui::TextDrawInfo& d : mbl::ui::text_draws)
     {
 	    const vec2i &pos = d.pos;
@@ -137,6 +157,7 @@ void    mbl::ui::render()
 
     draws.clear();
     text_draws.clear();
+    sprite_draws.clear();
 }
 
 u32	mbl::ui::getFontSizeY()
