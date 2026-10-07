@@ -94,6 +94,23 @@ void    mbl::ui::render()
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    for (mbl::ui::SpriteInfo& d : mbl::ui::sprite_draws)
+    {
+	    const vec2i &pos = d.pos;
+	    const vec2i &size = d.size;
+
+	    sprite_shader.bind();
+	    mat4f model = mat4f::translate(vec3f(pos.x(), pos.y(), 0.0f)) * mat4f::scale(vec3f(size.x(), size.y(), 1.0f));
+	    sprite_shader.setMat4("uModel", model);
+	    sprite_shader.setMat4("uProj", mat4f::ortho(0.0f, mbl::ui::input_ptr->width(), mbl::ui::input_ptr->height(), 0.0f, -1.0f, 1.0f));
+	    sprite_shader.setInt("uTex", 0);
+	    sprite_shader.setInt("uTile", d.tile);
+
+		if (d.texture)
+			d.texture->bind(0);
+
+	    mbl::ui::rect_mesh.draw(GL_TRIANGLES);
+    }
     for (mbl::ui::DrawInfo &d : mbl::ui::draws)
     {
         const vec2i &pos = d.pos;
@@ -115,22 +132,6 @@ void    mbl::ui::render()
 		    rect_shader.setVec3("uColor", vec3f(0, 1, 0));
 
         mbl::ui::rect_mesh.draw(GL_TRIANGLES);
-    }
-    for (mbl::ui::SpriteInfo& d : mbl::ui::sprite_draws)
-    {
-	    const vec2i &pos = d.pos;
-	    const vec2i &size = d.size;
-
-	    rect_shader.bind();
-	    mat4f model = mat4f::translate(vec3f(pos.x(), pos.y(), 0.0f)) * mat4f::scale(vec3f(size.x(), size.y(), 1.0f));
-	    rect_shader.setMat4("uModel", model);
-	    rect_shader.setMat4("uProj", mat4f::ortho(0.0f, mbl::ui::input_ptr->width(), mbl::ui::input_ptr->height(), 0.0f, -1.0f, 1.0f));
-	    rect_shader.setInt("uTex", 0);
-
-		if (d.texture)
-			d.texture->bind(0);
-
-	    mbl::ui::rect_mesh.draw(GL_TRIANGLES);
     }
     for (mbl::ui::TextDrawInfo& d : mbl::ui::text_draws)
     {
