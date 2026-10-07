@@ -28,6 +28,17 @@ struct  AABB
                 return (false);
         return (true);
     }
+    static bool    contains(const AABB<N, T>& a, const AABB<N, T>& b) requires (N == 3)
+    {
+    	return (contains(a, vec3i(b.pos.x(), b.pos.y(), b.pos.z()))
+     			&& contains(a, vec3i(b.pos.x() + b.size.x(), b.pos.y(), b.pos.z()))
+     			&& contains(a, vec3i(b.pos.x(), b.pos.y() + b.size.y(), b.pos.z()))
+     			&& contains(a, vec3i(b.pos.x(), b.pos.y(), b.pos.z() + b.size.z()))
+     			&& contains(a, vec3i(b.pos.x() + b.size.x(), b.pos.y() + b.size.y(), b.pos.z()))
+     			&& contains(a, vec3i(b.pos.x() + b.size.x(), b.pos.y(), b.pos.z() + b.size.z()))
+     			&& contains(a, vec3i(b.pos.x(), b.pos.y() + b.size.y(), b.pos.z() + b.size.z()))
+     			&& contains(a, vec3i(b.pos.x() + b.size.x(), b.pos.y() + b.size.y(), b.pos.z() + b.size.z())));
+    }
 };
 
 using aabb2i = AABB<2, int>;
